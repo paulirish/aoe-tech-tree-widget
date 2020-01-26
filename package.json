@@ -1,0 +1,26 @@
+{
+  "name": "aoe-tech-tree-widget",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && browserify src/index.ts -p [ tsify --noImplicityAny ] > build/aoe-tech-tree-bundle.js && copyfiles -f src/*.html src/*.css build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Treee/aoe-tech-tree-widget.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Treee/aoe-tech-tree-widget/issues"
+  },
+  "homepage": "https://github.com/Treee/aoe-tech-tree-widget#readme",
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "copyfiles": "^2.2.0",
+    "tsify": "^4.0.1",
+    "typescript": "^3.7.5"
+  }
+}
