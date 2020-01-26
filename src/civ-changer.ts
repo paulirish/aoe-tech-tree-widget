@@ -20,10 +20,7 @@ export class CivChanger {
         }
 
         $(window).bind('hashchange', (event) => {
-
             const oldConfig = this.aoe2Config;
-
-            console.log('url changed', event);
             // url changed!
             this.aoe2Config = this.aoe2Config.setConfigFromHash();
 
