@@ -6,5 +6,5 @@ let civChanger: CivChanger;
 
 aoe2Api.getAoE2Data().then((data) => {
     civChanger = new CivChanger(data);
-    $('body').append(civChanger.createHtmlElement("Bulgarians"));
+    $('body').append(civChanger.getCivsHtmlElement());
 });

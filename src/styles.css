@@ -2,6 +2,11 @@
 font-family: 'Cinzel Decorative', cursive;
 font-family: 'Spectral SC', serif;
 */
+.civ-selector {
+    position: absolute;
+    z-index: 1;
+}
+
 .div-background {
     display: inline-block;
     font-size: larger;
