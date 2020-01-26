@@ -13,9 +13,9 @@ export class CivChanger {
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
 
-        setTimeout(() => {
-            this.fadeOut(htmlElement);
-        }, 10000);
+        // setTimeout(() => {
+        //     this.fadeOut(htmlElement);
+        // }, 10000);
     }
 
     fadeOut(htmlElement: JQuery<HTMLElement>) {
@@ -37,8 +37,10 @@ export class CivChanger {
 
     createHtmlElement(civName: string) {
         const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
-        template.append($('<div></div>').addClass('civ-name'));
-        template.append($('<div></div>').addClass('civ-desc'));
+        const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
+        wrapperDiv.append($('<div></div>').addClass('civ-name'));
+        wrapperDiv.append($('<div></div>').addClass('civ-desc'));
+        template.append(wrapperDiv);
         this.fadeIn(civName, template);
         return template;
     }

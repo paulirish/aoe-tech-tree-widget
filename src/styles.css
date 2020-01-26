@@ -9,7 +9,6 @@ font-family: 'Spectral SC', serif;
 
 .div-background {
     display: inline-block;
-    font-size: larger;
     width: 500px;
     height: 600px;    
     background: url("https://cdn.discordapp.com/attachments/252819689405808640/670860137413607424/popup_menu_bg_portrait.png");
@@ -17,18 +16,23 @@ font-family: 'Spectral SC', serif;
     background-repeat: no-repeat;
 }
 
-.civ-name {
+.div-wrapper {
+    width: 75%;
+    margin: 1rem auto;
     text-align: center;
-    margin-top: 3.5rem;
+}
+
+.civ-name {
+    margin-top: 2.2rem;
     font-weight: bold;
     font-size: xx-large;
     font-family: 'Cinzel Decorative', cursive;
 }
 
 .civ-desc {
-    text-align: center;
-    margin: 1rem auto;
-    width: 75%;
+    font-family: 'Spectral SC', serif;
+    line-height: 1.4rem;
+    letter-spacing: -.07rem;
 }
 
 .mask-img {

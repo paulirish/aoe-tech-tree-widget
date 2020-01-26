@@ -11,11 +11,11 @@ class CivChanger {
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        setTimeout(() => {
-            this.fadeOut(civName, htmlElement);
-        }, 10000);
+        // setTimeout(() => {
+        //     this.fadeOut(htmlElement);
+        // }, 10000);
     }
-    fadeOut(civName, htmlElement) {
+    fadeOut(htmlElement) {
         htmlElement.removeClass('fade-in');
         htmlElement.addClass('fade-out');
         setTimeout(() => {
@@ -31,8 +31,10 @@ class CivChanger {
     }
     createHtmlElement(civName) {
         const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
-        template.append($('<div></div>').addClass('civ-name'));
-        template.append($('<div></div>').addClass('civ-desc'));
+        const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
+        wrapperDiv.append($('<div></div>').addClass('civ-name'));
+        wrapperDiv.append($('<div></div>').addClass('civ-desc'));
+        template.append(wrapperDiv);
         this.fadeIn(civName, template);
         return template;
     }
