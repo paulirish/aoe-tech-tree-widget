@@ -25,9 +25,79 @@ exports.AoE2Api = AoE2Api;
 },{}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+class AoE2Config {
+    constructor() {
+        this.civName = '';
+        this.fadeOut = false;
+        this.visibleDuration = 0; // use this value to show and hide in one action. this number determines how long it will be visible
+        this.fadeInDuration = 2;
+        this.fadeOutDuration = 2.5;
+    }
+    setConfigFromHash() {
+        return this.setConfigFrom(window.location.hash.substring(1));
+    }
+    setConfigFromQueryString() {
+        return this.setConfigFrom(window.location.search.substring(1));
+    }
+    setConfigFrom(string) {
+        string.split('&').forEach((param) => {
+            const paramKey = param.split('=')[0];
+            const paramValue = param.split('=')[1];
+            if (!paramValue) {
+                return;
+            }
+            else if (paramValue === 'true' || paramValue === 'false') {
+                Object.defineProperty(this, paramKey, {
+                    value: paramValue === 'true',
+                    writable: true
+                });
+            }
+            else {
+                Object.defineProperty(this, paramKey, {
+                    value: paramValue,
+                    writable: true
+                });
+            }
+        });
+        return this;
+    }
+}
+exports.AoE2Config = AoE2Config;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class CivChanger {
-    constructor(techData) {
+    constructor(techData, aoe2Config) {
         this.data = techData;
+        this.aoe2Config = aoe2Config;
+    }
+    addCivToBody(civName) {
+        $('body').append(this.createHtmlElement(civName));
+    }
+    listenForUrlChanges() {
+        this.aoe2Config.setConfigFromHash();
+        if (this.aoe2Config.civName && this.aoe2Config.civName !== '') {
+            this.addCivToBody(this.aoe2Config.civName);
+        }
+        $(window).bind('hashchange', (event) => {
+            const oldConfig = this.aoe2Config;
+            console.log('url changed', event);
+            // url changed!
+            this.aoe2Config = this.aoe2Config.setConfigFromHash();
+            if (oldConfig.civName === this.aoe2Config.civName) {
+                //civ didnt change so we probably want to fade out
+                if (this.aoe2Config.fadeOut) {
+                    this.fadeOut($(`#${this.aoe2Config.civName}`));
+                }
+            }
+            else {
+                // new civ so we probably want to show it
+                if (this.aoe2Config.civName && this.aoe2Config.civName !== '') {
+                    this.addCivToBody(this.aoe2Config.civName);
+                }
+            }
+        });
     }
     fadeIn(civName, htmlElement) {
         const civKey = this.data.civs[civName];
@@ -36,23 +106,22 @@ class CivChanger {
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        // setTimeout(() => {
-        //     this.fadeOut(htmlElement);
-        // }, 10000);
+        if (this.aoe2Config.visibleDuration) {
+            setTimeout(() => {
+                this.fadeOut(htmlElement);
+            }, this.aoe2Config.visibleDuration * 1000);
+        }
     }
     fadeOut(htmlElement) {
         htmlElement.removeClass('fade-in');
         htmlElement.addClass('fade-out');
         setTimeout(() => {
             htmlElement.remove();
-        }, 2500); // remove this div after the animation is done
+        }, this.aoe2Config.fadeOutDuration * 1000);
     }
     clearTemplate() {
         $('#civ-name').text('');
         $('#civ-desc').html('');
-    }
-    addCivToBody(civName) {
-        $('body').append(this.createHtmlElement(civName));
     }
     createHtmlElement(civName) {
         const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
@@ -63,35 +132,21 @@ class CivChanger {
         this.fadeIn(civName, template);
         return template;
     }
-    getCivsHtmlElement() {
-        const template = $('<select id="civSelector"></select>').addClass('civ-selector');
-        Object.keys(this.data.civs).forEach((civName) => {
-            template.append($(`<option value="${civName}">${civName}</option>`));
-        });
-        template.change(() => {
-            this.civChanged();
-        });
-        return template;
-    }
-    civChanged() {
-        const civName = $('#civSelector').val();
-        if (civName && civName !== '') {
-            this.addCivToBody(civName.toString());
-        }
-    }
 }
 exports.CivChanger = CivChanger;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const civ_changer_1 = require("./civ-changer");
 const aoe2_api_1 = require("./aoe2-api");
-const aoe2Api = new aoe2_api_1.AoE2Api();
+const aoe2_config_1 = require("./aoe2-config");
 let civChanger;
+const aoe2Api = new aoe2_api_1.AoE2Api();
+const aoe2Config = new aoe2_config_1.AoE2Config();
 aoe2Api.getAoE2Data().then((data) => {
-    civChanger = new civ_changer_1.CivChanger(data);
-    $('body').append(civChanger.getCivsHtmlElement());
+    civChanger = new civ_changer_1.CivChanger(data, aoe2Config);
+    civChanger.listenForUrlChanges();
 });
 
-},{"./aoe2-api":1,"./civ-changer":2}]},{},[3]);
+},{"./aoe2-api":1,"./aoe2-config":2,"./civ-changer":3}]},{},[4]);

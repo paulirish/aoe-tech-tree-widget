@@ -1,10 +1,13 @@
 import { CivChanger } from "./civ-changer";
 import { AoE2Api } from "./aoe2-api";
+import { AoE2Config } from "./aoe2-config";
 
-const aoe2Api = new AoE2Api();
 let civChanger: CivChanger;
 
+const aoe2Api = new AoE2Api();
+const aoe2Config = new AoE2Config();
+
 aoe2Api.getAoE2Data().then((data) => {
-    civChanger = new CivChanger(data);
-    $('body').append(civChanger.getCivsHtmlElement());
+    civChanger = new CivChanger(data, aoe2Config);
+    civChanger.listenForUrlChanges();
 });
