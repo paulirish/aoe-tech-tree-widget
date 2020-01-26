@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Treee/aoe-tech-tree-widget#readme",
   "devDependencies": {
+    "@types/jquery": "^3.3.31",
     "browserify": "^16.5.0",
     "copyfiles": "^2.2.0",
     "tsify": "^4.0.1",
