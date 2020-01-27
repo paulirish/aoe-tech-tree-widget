@@ -60,7 +60,7 @@ class TechTreeCivChanger {
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
         const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
         wrapperDiv.append(audio);
-        wrapperDiv.find('#myaudio')[0].volume = 0.05;
+        wrapperDiv.find('#myaudio')[0].volume = this.aoe2Config.volume;
         wrapperDiv.append($('<div></div>').addClass('civ-name'));
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
         template.append(wrapperDiv);

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AoE2Config {
     constructor() {
         this.civName = '';
+        this.volume = 0.15;
         this.fadeOut = false;
         this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;

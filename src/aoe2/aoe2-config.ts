@@ -1,6 +1,7 @@
 export class AoE2Config {
 
     civName: string = '';
+    volume: number = 0.15;
     fadeOut: boolean = false;
     visibleDuration: number = 25; // use this value to show and hide in one action. this number determines how long it will be visible
     fadeInDuration: number = 2;
