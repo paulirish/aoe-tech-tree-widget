@@ -11,7 +11,7 @@ font-family: 'Spectral SC', serif;
     display: inline-block;
     width: 500px;
     height: 600px;    
-    background: url("https://cdn.discordapp.com/attachments/252819689405808640/670860137413607424/popup_menu_bg_portrait.png");
+    background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/popup_menu_bg_portrait.png");
     background-size: contain;
     background-repeat: no-repeat;
 }
