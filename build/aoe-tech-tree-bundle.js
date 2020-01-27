@@ -125,7 +125,9 @@ class CivChanger {
     createHtmlElement(civName) {
         const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
-        wrapperDiv.append($(`<source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/Celts.mp3" type="audio/mpeg">`));
+        // const audio = $(`<audio autoplay id="myaudio" src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/Celts.mp3" type="audio/mpeg"></audio>`);
+        // $('#myaudio').vol = 0.1;
+        // wrapperDiv.append(audio)
         wrapperDiv.append($('<div></div>').addClass('civ-name'));
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
         template.append(wrapperDiv);
