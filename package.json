@@ -14,7 +14,7 @@
     "browserify-admin": "browserify src/admin/index.ts -p [ tsify --noImplicityAny ] > build/admin/aoe-admin-bundle.js",
     "browserify-all": "npm run browserify-index && npm run browserify-admin",
     "build": "tsc && npm run browserify-all && npm run copy-all",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,11 @@
   },
   "homepage": "https://github.com/Treee/aoe-tech-tree-widget#readme",
   "devDependencies": {
+    "@types/jasmine": "^3.5.1",
     "@types/jquery": "^3.3.31",
     "browserify": "^16.5.0",
     "copyfiles": "^2.2.0",
+    "jasmine": "^3.5.0",
     "tsify": "^4.0.1",
     "typescript": "^3.7.5"
   }

@@ -67,7 +67,7 @@ exports.AoE2Config = AoE2Config;
 },{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class CivChanger {
+class TechTreeCivChanger {
     constructor(techData, aoe2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
@@ -135,20 +135,20 @@ class CivChanger {
         return template;
     }
 }
-exports.CivChanger = CivChanger;
+exports.TechTreeCivChanger = TechTreeCivChanger;
 
 },{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const civ_changer_1 = require("./aoe2/civ-changer");
+const tech_tree_civ_changer_1 = require("./aoe2/tech-tree-civ-changer");
 const aoe2_api_1 = require("./aoe2/aoe2-api");
 const aoe2_config_1 = require("./aoe2/aoe2-config");
 let civChanger;
 const aoe2Api = new aoe2_api_1.AoE2Api();
 const aoe2Config = new aoe2_config_1.AoE2Config();
 aoe2Api.getAoE2Data().then((data) => {
-    civChanger = new civ_changer_1.CivChanger(data, aoe2Config);
+    civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(data, aoe2Config);
     civChanger.listenForUrlChanges();
 });
 
-},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer":3}]},{},[4]);
+},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/tech-tree-civ-changer":3}]},{},[4]);
