@@ -140,9 +140,9 @@ exports.CivChanger = CivChanger;
 },{}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const civ_changer_1 = require("./civ-changer");
-const aoe2_api_1 = require("./aoe2-api");
-const aoe2_config_1 = require("./aoe2-config");
+const civ_changer_1 = require("./aoe2/civ-changer");
+const aoe2_api_1 = require("./aoe2/aoe2-api");
+const aoe2_config_1 = require("./aoe2/aoe2-config");
 let civChanger;
 const aoe2Api = new aoe2_api_1.AoE2Api();
 const aoe2Config = new aoe2_config_1.AoE2Config();
@@ -151,4 +151,4 @@ aoe2Api.getAoE2Data().then((data) => {
     civChanger.listenForUrlChanges();
 });
 
-},{"./aoe2-api":1,"./aoe2-config":2,"./civ-changer":3}]},{},[4]);
+},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer":3}]},{},[4]);

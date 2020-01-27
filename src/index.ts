@@ -1,6 +1,6 @@
-import { CivChanger } from "./civ-changer";
-import { AoE2Api } from "./aoe2-api";
-import { AoE2Config } from "./aoe2-config";
+import { CivChanger } from "./aoe2/civ-changer";
+import { AoE2Api } from "./aoe2/aoe2-api";
+import { AoE2Config } from "./aoe2/aoe2-config";
 
 let civChanger: CivChanger;
 
