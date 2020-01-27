@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && browserify src/index.ts -p [ tsify --noImplicityAny ] > build/aoe-tech-tree-bundle.js && copyfiles -f src/*.html src/*.css build",
+    "build": "tsc && browserify src/index.ts -p [ tsify --noImplicityAny ] > build/aoe-tech-tree-bundle.js && copyfiles -f src/*.html src/*.css build && copyfiles -f src/sounds/*.mp3 build/sounds",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

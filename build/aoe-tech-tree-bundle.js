@@ -29,7 +29,7 @@ class AoE2Config {
     constructor() {
         this.civName = '';
         this.fadeOut = false;
-        this.visibleDuration = 0; // use this value to show and hide in one action. this number determines how long it will be visible
+        this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
         this.fadeOutDuration = 2.5;
     }
@@ -82,7 +82,6 @@ class CivChanger {
         }
         $(window).bind('hashchange', (event) => {
             const oldConfig = this.aoe2Config;
-            console.log('url changed', event);
             // url changed!
             this.aoe2Config = this.aoe2Config.setConfigFromHash();
             if (oldConfig.civName === this.aoe2Config.civName) {
@@ -126,6 +125,7 @@ class CivChanger {
     createHtmlElement(civName) {
         const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
+        wrapperDiv.append($(`<source src="./sounds/${civName}.mp3" type="audio/mpeg">`));
         wrapperDiv.append($('<div></div>').addClass('civ-name'));
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
         template.append(wrapperDiv);

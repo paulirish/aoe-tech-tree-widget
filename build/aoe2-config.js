@@ -4,7 +4,7 @@ class AoE2Config {
     constructor() {
         this.civName = '';
         this.fadeOut = false;
-        this.visibleDuration = 0; // use this value to show and hide in one action. this number determines how long it will be visible
+        this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
         this.fadeOutDuration = 2.5;
     }
