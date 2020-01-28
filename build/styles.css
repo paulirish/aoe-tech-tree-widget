@@ -2,9 +2,9 @@
 font-family: 'Cinzel Decorative', cursive;
 font-family: 'Spectral SC', serif;
 */
-.civ-selector {
-    position: absolute;
-    z-index: 1;
+
+.tech-overlay-wrapper {
+    display: flex;
 }
 
 .div-background {
@@ -111,4 +111,17 @@ font-family: 'Spectral SC', serif;
 
     color: black;
     text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.civ-text{
+    display: inline-block;
+    margin-top: 75%;
+}
+
+.faded {
+    opacity: .5;
+}
+
+.not-faded {
+    opacity: 1;
 }

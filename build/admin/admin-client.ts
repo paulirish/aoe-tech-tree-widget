@@ -68,7 +68,7 @@ export class AdminClient {
             "Magyars", "Malay", "Malians", "Mayans", "Mongols", "Persians", "Portuguese",
             "Saracens", "Slavs", "Spanish", "Tatars", "Teutons", "Turks",
             "Vietnamese", "Vikings"].forEach((civ) => {
-                const civIcon = $(`<div id="civ-icon-clickable">${civ}</div>`).addClass('civ-tech-icon');
+                const civIcon = $(`<div id="civ-icon-clickable"><div id="civ-text" class="civ-text">${civ}</div></div>`).addClass(['civ-tech-icon', 'faded']);
                 // emblem
                 // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
                 civIcon.css({
@@ -76,14 +76,17 @@ export class AdminClient {
                     'background-size': 'cover',
                     'background-repeat': 'no-repeat'
                 });
+
                 civIcon.hover(() => {
                     civIcon.css({
-                        'background-color': 'green'
+                        'opacity': '1'
                     });
                 }, () => {
-                    civIcon.css({
-                        'background-color': ''
-                    });
+                    if (!this.lastClickedCivs.includes(civ)) { // if we've clicked this civ, dont hide it yet
+                        civIcon.css({
+                            'opacity': '0.5'
+                        });
+                    }
                 });
 
                 civIcon.click(() => {
@@ -91,10 +94,14 @@ export class AdminClient {
                     if (this.lastClickedCivs.includes(civ)) { // if we have clicked this civ before
                         this.hideCiv(civ);
                         this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => { // remove hidden civs
+                            civIcon.addClass('faded');
+                            civIcon.removeClass('not-faded');
                             return civ !== clickedCiv;
                         });
                     } else {
                         this.showCiv(civ);
+                        civIcon.removeClass('faded');
+                        civIcon.addClass('not-faded');
                         this.lastClickedCivs.push(civ);
                     }
                 });
