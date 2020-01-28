@@ -2,8 +2,6 @@
 **/*/secrets.ts
 **/*/secrets.js
 
-*.pem
-
 # Logs
 logs
 *.log
