@@ -86,3 +86,28 @@ font-family: 'Spectral SC', serif;
         mask-position: 0 100%;    
     }
 }
+
+
+.civ-controls {
+
+}
+
+.civ-tech-icons-wrapper {
+    display: inline-block;
+    width: 50rem;
+    height: 50rem;
+}
+
+.civ-tech-icon {
+    width: 5rem;
+    height: 5rem;
+    display: inline-block;
+
+    background: beige;
+    text-align: center;
+    border: black 1px solid;
+}
+
+.civ-tech-icon:hover {
+    background: green;
+}

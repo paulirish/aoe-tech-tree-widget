@@ -1,55 +1,38 @@
+import { SocketEnums } from "../enums";
+
 export class AdminClient {
-    port: number;
 
-    serverUrl: string;
     socket: WebSocket;
+    clientId: string = '';
 
-    constructor(serverUrl: string = '', port: number = 8080) {
-        this.port = port;
-        this.serverUrl = `${serverUrl}:${port}`;
+    constructor() {
         this.socket = new WebSocket('ws://localhost:8080');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onclose = this.onClose;
         this.socket.onerror = this.onError;
+        this.buildHtml();
     }
 
-    onClientConnect(websocket: WebSocket) {
-        console.log(`Client connecting: {some client id}.`);
-        // this.socket.clients.add(websocket);
-        // this.socket.clients.forEach((client: any) => {
-
-        //     client.on('message', (message: string) => {
-        //         this.handleClientMessage(message, client);
-        //     });
-
-        //     client.on('error', (error: Error) => {
-        //         this.handleClientError(error, client);
-        //     });
-
-        //     console.log(`Client {some client id} connected.`);
-        //     client.send(JSON.stringify({ dataType: 'connected', data: 'client connected' }));
-        // });
+    buildHtml() {
+        this.createClickableCivIcons();
     }
 
-    handleClientMessage(message: string, client: WebSocket) {
-        const data = JSON.parse(message);
-        console.log('received: %s', message);
-        client.send(JSON.stringify({ type: '', data: '' }));
+    showCiv(civName: string) {
+        this.socket.send(this.formatDataForWebsocket(SocketEnums.AdminShowCiv, civName));
     }
 
-    handleClientError(error: Error, client: WebSocket) {
-        console.log(`Error: {some client id}.`, error);
+    hideCiv(civName: string) {
+        this.socket.send(this.formatDataForWebsocket(SocketEnums.AdminHideCiv, civName));
     }
 
     onOpen(event: any) {
         console.log('[open] Connection established');
     }
 
-    onMessage(event: any) {
-        // console.log(`[message] Data received from server: ${event.data}`);
-        const eventData = JSON.parse(event.data);
-
+    onMessage(msg: any) {
+        const message = JSON.parse(msg.data);
+        console.log('event', message);
     }
 
     // need to handle cwhen clients close their conenction
@@ -65,6 +48,41 @@ export class AdminClient {
 
     onError(event: any) {
         console.log(`[error] ${event.message}`);
+    }
+
+    formatDataForWebsocket(dataType: SocketEnums, rawData: any): string {
+        const clientId = $('#txt-client-id').val();
+        console.log('Formatting Data for websocket');
+        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${clientId}`);
+        return JSON.stringify({ type: dataType, data: rawData, toClientId: clientId });
+    }
+
+    lastClickedCivs: string[] = [];
+    createClickableCivIcons() {
+        const divWrapper = $('<div id="civ-tech-icons"></div>').addClass('civ-tech-icons-wrapper');
+        ["Aztecs", "Berbers", "Britons", "Bulgarians", "Burmese", "Byzantines",
+            "Celts", "Chinese", "Cumans", "Ethiopians", "Franks", "Goths", "Huns",
+            "Incas", "Indians", "Italians", "Japanese", "Khmer", "Koreans", "Lithuanians",
+            "Magyars", "Malay", "Malians", "Mayans", "Mongols", "Persians", "Portuguese",
+            "Saracens", "Slavs", "Spanish", "Tatars", "Teutons", "Turks",
+            "Vietnamese", "Vikings"].forEach((civ) => {
+                const civIcon = $(`<div id="civ-icon-clickable">${civ}</div>`).addClass('civ-tech-icon');
+                civIcon.css({ 'background': `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/civ-icons/${civ.toLowerCase()}.png)` });
+                civIcon.click(() => {
+
+                    if (this.lastClickedCivs.includes(civ)) { // if we have clicked this civ before
+                        this.hideCiv(civ);
+                        this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => { // remove hidden civs
+                            return civ !== clickedCiv;
+                        });
+                    } else {
+                        this.showCiv(civ);
+                        this.lastClickedCivs.push(civ);
+                    }
+                });
+                divWrapper.append(civIcon);
+            });
+        $('body').append(divWrapper);
     }
 
 }

@@ -8,6 +8,7 @@ class AoE2Config {
         this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
         this.fadeOutDuration = 2.5;
+        this.clientId = 'tree';
     }
     setConfigFromHash() {
         return this.setConfigFrom(window.location.hash.substring(1));
