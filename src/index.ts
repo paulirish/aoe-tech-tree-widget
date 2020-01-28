@@ -12,5 +12,7 @@ aoe2Api.getAoE2Data().then((data) => {
     aoe2Config.setConfigFromQueryString();
     civChanger = new TechTreeCivChanger(data, aoe2Config);
     civChanger.listenForUrlChanges();
-    new CivChangerClient(civChanger, aoe2Config.clientId);
+    if (aoe2Config.socketMode) {
+        new CivChangerClient(civChanger, aoe2Config.clientId);
+    }
 });

@@ -32,8 +32,9 @@ class AoE2Config {
         this.fadeOut = false;
         this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
-        this.fadeOutDuration = 2.5;
+        this.fadeOutDuration = 2;
         this.clientId = 'tree';
+        this.socketMode = false;
     }
     setConfigFromHash() {
         return this.setConfigFrom(window.location.hash.substring(1));
@@ -222,7 +223,9 @@ aoe2Api.getAoE2Data().then((data) => {
     aoe2Config.setConfigFromQueryString();
     civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(data, aoe2Config);
     civChanger.listenForUrlChanges();
-    new civ_changer_client_1.CivChangerClient(civChanger, aoe2Config.clientId);
+    if (aoe2Config.socketMode) {
+        new civ_changer_client_1.CivChangerClient(civChanger, aoe2Config.clientId);
+    }
 });
 
 },{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4}]},{},[6]);

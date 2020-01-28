@@ -5,8 +5,9 @@ export class AoE2Config {
     fadeOut: boolean = false;
     visibleDuration: number = 25; // use this value to show and hide in one action. this number determines how long it will be visible
     fadeInDuration: number = 2;
-    fadeOutDuration: number = 2.5;
+    fadeOutDuration: number = 2;
     clientId: string = 'tree';
+    socketMode: boolean = false;
 
     constructor() {
 
