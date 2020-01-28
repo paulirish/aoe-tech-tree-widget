@@ -1,20 +1,5 @@
 "use strict";
-// import { AdminServer } from "./admin-server";
 Object.defineProperty(exports, "__esModule", { value: true });
-// const adminServer = new AdminServer();
-// adminServer.startServer();
-const WebSocket = require("ws");
-const adminServer = new WebSocket.Server({ port: 8080 });
-adminServer.on('connection', (ws) => {
-    console.log('websocket connect', ws);
-    adminServer.clients.add(ws);
-    adminServer.clients.forEach((client) => {
-        client.on('message', (message) => {
-            const data = JSON.parse(message);
-        });
-        client.on('error', (error) => {
-            console.log(error);
-        });
-        client.send(JSON.stringify({ dataType: 'connected', data: 'client connected' }));
-    });
-});
+const admin_server_1 = require("./admin-server");
+const adminServer = new admin_server_1.AdminServer();
+adminServer.startServer();

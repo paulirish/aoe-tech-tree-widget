@@ -2,9 +2,9 @@
 font-family: 'Cinzel Decorative', cursive;
 font-family: 'Spectral SC', serif;
 */
-.civ-selector {
-    position: absolute;
-    z-index: 1;
+
+.tech-overlay-wrapper {
+    display: flex;
 }
 
 .div-background {
@@ -85,4 +85,43 @@ font-family: 'Spectral SC', serif;
         -webkit-mask-position: 0 100%;
         mask-position: 0 100%;    
     }
+}
+
+
+/* .civ-controls {
+
+} */
+
+.civ-tech-icons-wrapper {
+    display: inline-block;
+    width: 100%;
+}
+
+.civ-tech-icon {
+    width: 6rem;
+    height: 6rem;
+    display: inline-block;
+
+    text-align: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    font-size: larger;
+    font-weight: bold;
+
+    color: black;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.civ-text{
+    display: inline-block;
+    margin-top: 75%;
+}
+
+.faded {
+    opacity: .5;
+}
+
+.not-faded {
+    opacity: 1;
 }

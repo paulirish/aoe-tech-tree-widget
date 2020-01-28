@@ -33,6 +33,7 @@ class AoE2Config {
         this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
         this.fadeOutDuration = 2.5;
+        this.clientId = 'tree';
     }
     setConfigFromHash() {
         return this.setConfigFrom(window.location.hash.substring(1));
@@ -68,18 +69,72 @@ exports.AoE2Config = AoE2Config;
 },{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const enums_1 = require("../enums");
+class CivChangerClient {
+    constructor(techTreeCivChanger, socketKey) {
+        this.clientId = '';
+        this.clientId = socketKey;
+        this.techTreeCivChanger = techTreeCivChanger;
+        this.socket = new WebSocket('ws://ec2-52-11-210-14.us-west-2.compute.amazonaws.com:8080');
+        this.socket.onopen = this.onOpen.bind(this);
+        this.socket.onmessage = this.onMessage.bind(this);
+        this.socket.onclose = this.onClose;
+        this.socket.onerror = this.onError;
+    }
+    handleMessage(message) {
+        console.log(`DataType: ${message.type} / RawData: ${message.data}`);
+        if (message.type === enums_1.SocketEnums.AdminShowCiv) {
+            this.techTreeCivChanger.fadeIn(message.data);
+        }
+        else if (message.type === enums_1.SocketEnums.AdminHideCiv) {
+            this.techTreeCivChanger.fadeOut(message.data);
+        }
+    }
+    showCiv() {
+        this.techTreeCivChanger.fadeIn("Aztecs");
+    }
+    onOpen(event) {
+        console.log('[open] Connection established');
+        this.socket.send(this.formatDataForWebsocket(enums_1.SocketEnums.ClientRegister, this.clientId));
+    }
+    onMessage(event) {
+        this.handleMessage(JSON.parse(event.data));
+    }
+    // need to handle cwhen clients close their conenction
+    onClose(event) {
+        if (event.wasClean) {
+            console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+        }
+        else {
+            // e.g. server process killed or network down
+            // event.code is usually 1006 in this case
+            console.log('[close] Connection died');
+        }
+    }
+    onError(event) {
+        console.log(`[error] ${event.message}`);
+    }
+    formatDataForWebsocket(dataType, rawData) {
+        const clientId = $('#txt-client-id').val();
+        console.log('Formatting Data for websocket');
+        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${clientId}`);
+        return JSON.stringify({ type: dataType, data: rawData, toClientId: clientId });
+    }
+}
+exports.CivChangerClient = CivChangerClient;
+
+},{"../enums":5}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class TechTreeCivChanger {
     constructor(techData, aoe2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
     }
-    addCivToBody(civName) {
-        $('body').append(this.createHtmlElement(civName));
-    }
     listenForUrlChanges() {
         this.aoe2Config.setConfigFromHash();
         if (this.aoe2Config.civName && this.aoe2Config.civName !== '') {
-            this.addCivToBody(this.aoe2Config.civName);
+            this.fadeIn(this.aoe2Config.civName);
         }
         $(window).bind('hashchange', (event) => {
             const oldConfig = this.aoe2Config;
@@ -88,43 +143,49 @@ class TechTreeCivChanger {
             if (oldConfig.civName === this.aoe2Config.civName) {
                 //civ didnt change so we probably want to fade out
                 if (this.aoe2Config.fadeOut) {
-                    this.fadeOut($(`#${this.aoe2Config.civName}`));
+                    this.fadeOut(this.aoe2Config.civName);
                 }
             }
             else {
                 // new civ so we probably want to show it
                 if (this.aoe2Config.civName && this.aoe2Config.civName !== '') {
-                    this.addCivToBody(this.aoe2Config.civName);
+                    this.fadeIn(this.aoe2Config.civName);
                 }
             }
         });
     }
-    fadeIn(civName, htmlElement) {
+    fadeIn(civName) {
+        const htmlElement = this.createHtmlElement(civName);
         const civKey = this.data.civs[civName];
         const civDesc = this.data.key_value[civKey];
         htmlElement.find('.civ-name').text(civName);
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        if (this.aoe2Config.visibleDuration) {
-            setTimeout(() => {
-                this.fadeOut(htmlElement);
-            }, this.aoe2Config.visibleDuration * 1000);
-        }
+        // if (this.aoe2Config.visibleDuration) {
+        //     setTimeout(() => {
+        //         this.fadeOut(civName);
+        //     }, this.aoe2Config.visibleDuration * 1000);
+        // }
+        this.addToBody(htmlElement);
     }
-    fadeOut(htmlElement) {
+    fadeOut(civName) {
+        const htmlElement = $(`#${civName}-tech`);
         htmlElement.removeClass('fade-in');
         htmlElement.addClass('fade-out');
         setTimeout(() => {
             htmlElement.remove();
         }, this.aoe2Config.fadeOutDuration * 1000);
     }
+    addToBody(htmlElement) {
+        $('#tech-overlay-wrapper').append(htmlElement);
+    }
     clearTemplate() {
         $('#civ-name').text('');
         $('#civ-desc').html('');
     }
     createHtmlElement(civName) {
-        const template = $(`<div id="${civName}"></div>`).addClass(['div-background', 'mask-img']);
+        const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
         const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
         wrapperDiv.append(audio);
@@ -132,24 +193,36 @@ class TechTreeCivChanger {
         wrapperDiv.append($('<div></div>').addClass('civ-name'));
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
         template.append(wrapperDiv);
-        this.fadeIn(civName, template);
         return template;
     }
 }
 exports.TechTreeCivChanger = TechTreeCivChanger;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tech_tree_civ_changer_1 = require("./aoe2/tech-tree-civ-changer");
-const aoe2_api_1 = require("./aoe2/aoe2-api");
+var SocketEnums;
+(function (SocketEnums) {
+    SocketEnums[SocketEnums["ClientRegister"] = 0] = "ClientRegister";
+    SocketEnums[SocketEnums["AdminShowCiv"] = 1] = "AdminShowCiv";
+    SocketEnums[SocketEnums["AdminHideCiv"] = 2] = "AdminHideCiv";
+})(SocketEnums = exports.SocketEnums || (exports.SocketEnums = {}));
+
+},{}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const civ_changer_client_1 = require("./aoe2/civ-changer-client");
 const aoe2_config_1 = require("./aoe2/aoe2-config");
+const aoe2_api_1 = require("./aoe2/aoe2-api");
+const tech_tree_civ_changer_1 = require("./aoe2/tech-tree-civ-changer");
 let civChanger;
 const aoe2Api = new aoe2_api_1.AoE2Api();
 const aoe2Config = new aoe2_config_1.AoE2Config();
 aoe2Api.getAoE2Data().then((data) => {
+    aoe2Config.setConfigFromQueryString();
     civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(data, aoe2Config);
     civChanger.listenForUrlChanges();
+    new civ_changer_client_1.CivChangerClient(civChanger, aoe2Config.clientId);
 });
 
-},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/tech-tree-civ-changer":3}]},{},[4]);
+},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4}]},{},[6]);

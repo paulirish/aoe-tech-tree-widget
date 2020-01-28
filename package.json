@@ -40,6 +40,8 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/uuid": "^3.4.6",
+    "uuid": "^3.4.0",
     "ws": "^7.2.1"
   }
 }
