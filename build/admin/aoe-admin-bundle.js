@@ -58,7 +58,22 @@ class AdminClient {
             "Saracens", "Slavs", "Spanish", "Tatars", "Teutons", "Turks",
             "Vietnamese", "Vikings"].forEach((civ) => {
             const civIcon = $(`<div id="civ-icon-clickable">${civ}</div>`).addClass('civ-tech-icon');
-            civIcon.css({ 'background': `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/civ-icons/${civ.toLowerCase()}.png)` });
+            // emblem
+            // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
+            civIcon.css({
+                'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civ.toLowerCase()}.png`,
+                'background-size': 'cover',
+                'background-repeat': 'no-repeat'
+            });
+            civIcon.hover(() => {
+                civIcon.css({
+                    'background-color': 'green'
+                });
+            }, () => {
+                civIcon.css({
+                    'background-color': ''
+                });
+            });
             civIcon.click(() => {
                 if (this.lastClickedCivs.includes(civ)) { // if we have clicked this civ before
                     this.hideCiv(civ);

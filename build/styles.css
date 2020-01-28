@@ -94,20 +94,21 @@ font-family: 'Spectral SC', serif;
 
 .civ-tech-icons-wrapper {
     display: inline-block;
-    width: 50rem;
-    height: 50rem;
+    width: 100%;
 }
 
 .civ-tech-icon {
-    width: 5rem;
-    height: 5rem;
+    width: 6rem;
+    height: 6rem;
     display: inline-block;
 
-    background: beige;
     text-align: center;
-    border: black 1px solid;
-}
+    background-size: cover;
+    background-repeat: no-repeat;
 
-.civ-tech-icon:hover {
-    background: green;
+    font-size: larger;
+    font-weight: bold;
+
+    color: black;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
