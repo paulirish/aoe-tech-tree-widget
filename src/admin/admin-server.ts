@@ -11,6 +11,8 @@ export class AdminServer {
 
     constructor() {
         this.adminServer = new WebSocket.Server({ port: 8080 });
+        this.adminServer.close(() => {
+        })
     }
 
     startServer() {
@@ -48,7 +50,7 @@ export class AdminServer {
 
             ws.on('close', (error) => {
                 delete this.clients[uuid];
-                console.log(`deleted ${uuid}`);
+                console.log(`deleted ${uuid}. remaining: ${Object.keys(this.clients).length}`);
             });
 
         });
