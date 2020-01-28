@@ -1,13 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const WebSocket = require("ws");
+const https = require("https");
+const fs = require("fs");
 const uuid_1 = require("uuid");
 const enums_1 = require("../enums");
 class AdminServer {
     constructor() {
         this.clients = {};
-        this.adminServer = new WebSocket.Server({ port: 8080 });
-        const closeHandle = this.adminServer;
+        const server = https.createServer({
+            cert: fs.readFileSync('~./cert.pem'),
+            key: fs.readFileSync('~./websocketkey.pem')
+        });
+        this.adminServer = server;
+        this.adminServerSocket = new WebSocket.Server({ server });
+        const closeHandle = this.adminServerSocket;
         process.on('SIGHUP', function () {
             closeHandle.close();
             console.log('About to exit');
@@ -15,8 +22,8 @@ class AdminServer {
         });
     }
     startServer() {
-        this.adminServer.on('connection', (ws) => {
-            this.adminServer.clients.add(ws);
+        this.adminServerSocket.on('connection', (ws) => {
+            this.adminServerSocket.clients.add(ws);
             const uuid = uuid_1.v4();
             console.log(`registered user: ${uuid}`);
             ws.send(this.formatDataForWebsocket(enums_1.SocketEnums.ClientRegister, uuid));
@@ -45,6 +52,9 @@ class AdminServer {
                 delete this.clients[uuid];
                 console.log(`deleted ${uuid}. remaining: ${Object.keys(this.clients).length}`);
             });
+        });
+        this.adminServer.listen(() => {
+            console.log('test');
         });
     }
     formatDataForWebsocket(dataType, rawData) {
