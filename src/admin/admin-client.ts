@@ -8,7 +8,7 @@ export class AdminClient {
     // going to wss
     // https://stackoverflow.com/questions/23404160/why-does-my-wss-websockets-over-ssl-tls-connection-immediately-disconnect-w
     constructor() {
-        this.socket = new WebSocket('wss://ec2-52-11-210-14.us-west-2.compute.amazonaws.com:8443');
+        this.socket = new WebSocket('wss://ec2-34-216-67-54.us-west-2.compute.amazonaws.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onclose = this.onClose;
