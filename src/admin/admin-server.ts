@@ -1,17 +1,26 @@
 import WebSocket = require('ws');
+import https = require('https');
+import fs = require('fs');
 
 import { v4 } from 'uuid';
 import { SocketEnums } from '../enums';
 
 export class AdminServer {
 
-    private adminServer: WebSocket.Server;
+    private adminServerSocket: WebSocket.Server;
 
+    private adminServer: https.Server;
     private clients: any = {};
 
     constructor() {
-        this.adminServer = new WebSocket.Server({ port: 8080 });
-        const closeHandle = this.adminServer;
+
+        const server = https.createServer({
+            cert: fs.readFileSync('~./cert.pem'),
+            key: fs.readFileSync('~./websocketkey.pem')
+        });
+        this.adminServer = server;
+        this.adminServerSocket = new WebSocket.Server({ server });
+        const closeHandle = this.adminServerSocket;
         process.on('SIGHUP', function () {
             closeHandle.close();
             console.log('About to exit');
@@ -20,8 +29,8 @@ export class AdminServer {
     }
 
     startServer() {
-        this.adminServer.on('connection', (ws) => {
-            this.adminServer.clients.add(ws);
+        this.adminServerSocket.on('connection', (ws) => {
+            this.adminServerSocket.clients.add(ws);
 
             const uuid = v4();
             console.log(`registered user: ${uuid}`);
@@ -56,8 +65,12 @@ export class AdminServer {
                 delete this.clients[uuid];
                 console.log(`deleted ${uuid}. remaining: ${Object.keys(this.clients).length}`);
             });
-
         });
+
+        this.adminServer.listen(() => {
+            console.log('test');
+        });
+
     }
 
     formatDataForWebsocket(dataType: SocketEnums, rawData: any): string {
