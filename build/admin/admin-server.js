@@ -9,8 +9,8 @@ class AdminServer {
     constructor() {
         this.clients = {};
         const server = https.createServer({
-            cert: fs.readFileSync('../../../../ec2-user/cert.pem'),
-            key: fs.readFileSync('../../../../ec2-user/websocketkey.pem')
+            cert: fs.readFileSync('/home/ec2-user/cert.pem'),
+            key: fs.readFileSync('/home/ec2-user/websocketkey.pem')
         });
         this.adminServer = server;
         this.adminServerSocket = new WebSocket.Server({ server });
@@ -53,9 +53,7 @@ class AdminServer {
                 console.log(`deleted ${uuid}. remaining: ${Object.keys(this.clients).length}`);
             });
         });
-        this.adminServer.listen(() => {
-            console.log('test');
-        });
+        this.adminServer.listen(8443);
     }
     formatDataForWebsocket(dataType, rawData) {
         console.log(`DataType: ${dataType} / RawData: ${rawData}`);
