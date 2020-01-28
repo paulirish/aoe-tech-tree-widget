@@ -15,8 +15,8 @@ export class AdminServer {
     constructor() {
 
         const server = https.createServer({
-            cert: fs.readFileSync('/home/ec2-user/websocket_ssl.pem'),
-            key: fs.readFileSync('/home/ec2-user/websocket_ssl.key')
+            cert: fs.readFileSync('/etc/letsencrypt/live/itsatreee.com/fullchain.pem'),
+            key: fs.readFileSync('/etc/letsencrypt/live/itsatreee.com/privkey.pem')
         });
         this.adminServer = server;
         this.adminServerSocket = new WebSocket.Server({ server });
