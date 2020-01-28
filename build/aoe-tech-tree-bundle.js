@@ -188,10 +188,23 @@ class TechTreeCivChanger {
     createHtmlElement(civName) {
         const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
+        wrapperDiv.css({
+            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
+            'background-size': 'contain'
+        });
         const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
         wrapperDiv.append(audio);
         wrapperDiv.find('#myaudio')[0].volume = this.aoe2Config.volume;
-        wrapperDiv.append($('<div></div>').addClass('civ-name'));
+        const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
+        const civIcon = $(`<div></div>`).addClass('civ-icon');
+        civIcon.css({
+            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civName.toLowerCase()}.png")`,
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat'
+        });
+        const civNameText = $('<div></div>').addClass('civ-name');
+        civIconAndName.append(civIcon.clone()).append(civNameText).append(civIcon.clone());
+        wrapperDiv.append(civIconAndName);
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
         template.append(wrapperDiv);
         return template;

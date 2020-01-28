@@ -22,11 +22,27 @@ font-family: 'Spectral SC', serif;
     text-align: center;
 }
 
+.civ-icon {
+    width: 2rem;
+    height: 2rem;
+    display: inline-block;
+}
+
 .civ-name {
-    margin-top: 2.2rem;
+    display: inline-block;
     font-weight: bold;
     font-size: xx-large;
     font-family: 'Cinzel Decorative', cursive;
+    margin-left: .5rem;
+    margin-right: .5rem;
+}
+
+.civ-icon-and-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 2.2rem;
 }
 
 .civ-desc {
