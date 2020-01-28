@@ -6,7 +6,7 @@ export class AdminClient {
     clientId: string = '';
 
     constructor() {
-        this.socket = new WebSocket('ws://ec2-52-11-210-14.us-west-2.compute.amazonaws.com:8080');
+        this.socket = new WebSocket('wss://ec2-52-11-210-14.us-west-2.compute.amazonaws.com:8080');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onclose = this.onClose;
