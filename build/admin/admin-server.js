@@ -7,7 +7,11 @@ class AdminServer {
     constructor() {
         this.clients = {};
         this.adminServer = new WebSocket.Server({ port: 8080 });
-        this.adminServer.close(() => {
+        const closeHandle = this.adminServer;
+        process.on('SIGHUP', function () {
+            closeHandle.close();
+            console.log('About to exit');
+            process.exit();
         });
     }
     startServer() {

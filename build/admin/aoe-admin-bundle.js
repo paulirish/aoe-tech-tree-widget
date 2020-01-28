@@ -63,7 +63,7 @@ class AdminClient {
             // emblem
             // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
             civIcon.css({
-                'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civ.toLowerCase()}.png`,
+                'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civ.toLowerCase()}.png`,
                 'background-size': 'cover',
                 'background-repeat': 'no-repeat'
             });
