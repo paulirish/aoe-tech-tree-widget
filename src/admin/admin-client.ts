@@ -4,6 +4,7 @@ export class AdminClient {
 
     socket: WebSocket;
     clientId: string = '';
+    config: any = {};
 
     // going to wss
     // https://stackoverflow.com/questions/23404160/why-does-my-wss-websockets-over-ssl-tls-connection-immediately-disconnect-w
@@ -13,7 +14,40 @@ export class AdminClient {
         this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onclose = this.onClose;
         this.socket.onerror = this.onError;
+        this.setConfigFromQueryString();
         this.buildHtml();
+        this.setClientId();
+    }
+
+    public setConfigFromQueryString() {
+        this.config = this.setConfigFrom(window.location.search.substring(1));
+    }
+
+    private setConfigFrom(string: string): any {
+        const object = {};
+        string.split('&').forEach((param) => {
+            const paramKey = param.split('=')[0];
+            const paramValue = param.split('=')[1];
+            if (!paramValue) {
+                return;
+            }
+            else if (paramValue === 'true' || paramValue === 'false') {
+                Object.defineProperty(object, paramKey, {
+                    value: paramValue === 'true',
+                    writable: true
+                });
+            } else {
+                Object.defineProperty(object, paramKey, {
+                    value: paramValue,
+                    writable: true
+                });
+            }
+        });
+        return object;
+    }
+
+    setClientId() {
+        $('#txt-client-id').val(this.config.clientId);
     }
 
     buildHtml() {
