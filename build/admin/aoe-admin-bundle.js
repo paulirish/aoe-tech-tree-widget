@@ -8,7 +8,7 @@ class AdminClient {
     constructor() {
         this.clientId = '';
         this.lastClickedCivs = [];
-        this.socket = new WebSocket('ws://itsatreee.com');
+        this.socket = new WebSocket('wss://itsatreee.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);
         this.socket.onclose = this.onClose;
