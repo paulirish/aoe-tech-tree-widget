@@ -18,6 +18,7 @@ export class AdminServer {
             cert: fs.readFileSync('/etc/letsencrypt/live/itsatreee.com/fullchain.pem'),
             key: fs.readFileSync('/etc/letsencrypt/live/itsatreee.com/privkey.pem')
         });
+
         this.adminServer = server;
         this.adminServerSocket = new WebSocket.Server({ server });
         const closeHandle = this.adminServerSocket;
@@ -68,7 +69,7 @@ export class AdminServer {
         });
 
         this.adminServer.listen(8443);
-
+        console.log('Listening on port 8443');
     }
 
     formatDataForWebsocket(dataType: SocketEnums, rawData: any): string {

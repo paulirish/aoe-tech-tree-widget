@@ -54,6 +54,7 @@ class AdminServer {
             });
         });
         this.adminServer.listen(8443);
+        console.log('Listening on port 8443');
     }
     formatDataForWebsocket(dataType, rawData) {
         console.log(`DataType: ${dataType} / RawData: ${rawData}`);
