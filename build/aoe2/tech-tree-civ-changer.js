@@ -36,11 +36,13 @@ class TechTreeCivChanger {
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        // if (this.aoe2Config.visibleDuration) {
-        //     setTimeout(() => {
-        //         this.fadeOut(civName);
-        //     }, this.aoe2Config.visibleDuration * 1000);
-        // }
+        if (!this.aoe2Config.socketMode) {
+            if (this.aoe2Config.visibleDuration) {
+                setTimeout(() => {
+                    this.fadeOut(civName);
+                }, this.aoe2Config.visibleDuration * 1000);
+            }
+        }
         this.addToBody(htmlElement);
     }
     fadeOut(civName) {

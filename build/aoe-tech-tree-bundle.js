@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class AoE2Config {
     constructor() {
         this.civName = '';
-        this.volume = 0.15;
+        this.volume = 0.25;
         this.fadeOut = false;
         this.visibleDuration = 25; // use this value to show and hide in one action. this number determines how long it will be visible
         this.fadeInDuration = 2;
@@ -163,11 +163,13 @@ class TechTreeCivChanger {
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        // if (this.aoe2Config.visibleDuration) {
-        //     setTimeout(() => {
-        //         this.fadeOut(civName);
-        //     }, this.aoe2Config.visibleDuration * 1000);
-        // }
+        if (!this.aoe2Config.socketMode) {
+            if (this.aoe2Config.visibleDuration) {
+                setTimeout(() => {
+                    this.fadeOut(civName);
+                }, this.aoe2Config.visibleDuration * 1000);
+            }
+        }
         this.addToBody(htmlElement);
     }
     fadeOut(civName) {
