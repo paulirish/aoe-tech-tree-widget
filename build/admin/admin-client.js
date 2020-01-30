@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../enums");
 class AdminClient {
-    // going to wss
-    // https://stackoverflow.com/questions/23404160/why-does-my-wss-websockets-over-ssl-tls-connection-immediately-disconnect-w
     constructor() {
         this.clientId = '';
         this.config = {};

@@ -6,8 +6,6 @@ export class AdminClient {
     clientId: string = '';
     config: any = {};
 
-    // going to wss
-    // https://stackoverflow.com/questions/23404160/why-does-my-wss-websockets-over-ssl-tls-connection-immediately-disconnect-w
     constructor() {
         this.socket = new WebSocket('wss://itsatreee.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
