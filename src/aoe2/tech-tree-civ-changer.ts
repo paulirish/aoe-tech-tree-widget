@@ -7,6 +7,7 @@ export class TechTreeCivChanger {
     constructor(techData: any, aoe2Config: AoE2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
+        // this.fadeIn("Berbers");
     }
 
     public listenForUrlChanges() {
@@ -73,7 +74,7 @@ export class TechTreeCivChanger {
     }
 
     private createHtmlElement(civName: string) {
-        const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img']);
+        const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img-vertical']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
         wrapperDiv.css({
             'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,

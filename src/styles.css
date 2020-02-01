@@ -4,20 +4,59 @@ font-family: 'Spectral SC', serif;
 */
 
 .tech-overlay-wrapper {
-    display: flex;
+    position: relative;
+    display: inline-block;
+    margin: -1rem;
+    z-index: 1;
+}
+
+.upgrade-overlay-wrapper {
+    position: fixed;
+    display: inline-block;
+    width: 45rem;
+    height: 38rem;   
+    margin-left: -1rem;
+    top: 1rem;
+    z-index: -2;
 }
 
 .div-background {
     display: inline-block;
-    width: 500px;
-    height: 600px;    
-    background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/popup_menu_bg_portrait.png");
+    width: 33rem;
+    height: 38rem;   
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/popup_menu_bg_portrait.png");
     background-size: contain;
     background-repeat: no-repeat;
 }
 
+.div-upgrade-background-wrapper {
+    margin: -1rem;
+    display: inline-flex;
+    width: 45rem;
+    height: 10rem;
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/chatbar_bg.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+.div-upgrade-background {
+    display: inline-flex;
+    padding-top: 1.5rem;
+}
+
+.div-upgrade {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    border: beige 1px solid;
+    box-shadow: 7px 5px 11px black;
+    border-radius: .5rem;
+}
+
 .div-wrapper {
     width: 75%;
+    height: 85%;
     margin: 1rem auto;
     text-align: center;
 }
@@ -52,7 +91,7 @@ font-family: 'Spectral SC', serif;
     font-weight: 600;
 }
 
-.mask-img {
+.mask-img-vertical {
     -webkit-mask-image: linear-gradient(to top, 
         transparent 33.3%, 
         hsl(0, 0%, 100%, 0) 33.4%, 
@@ -74,12 +113,42 @@ font-family: 'Spectral SC', serif;
     mask-repeat: no-repeat;
 }
 
+.mask-img-horizontal {
+    -webkit-mask-image: linear-gradient(to left, 
+        transparent 33.3%, 
+        hsl(0, 0%, 100%, 0) 33.4%, 
+        hsl(0, 0%, 100%, .9) 66.6%, 
+        hsl(0, 0%, 100%, .9) 100%
+    );
+    -webkit-mask-size: 300% 100%;
+    -webkit-mask-position: 0;
+    -webkit-mask-repeat: no-repeat;
+
+    mask-image: linear-gradient(to left, 
+        transparent 33.3%, 
+        hsl(0, 0%, 100%, 0) 33.4%, 
+        hsl(0, 0%, 100%, .9) 66.6%, 
+        hsl(0, 0%, 100%, .9) 100%
+    );
+    mask-size: 300% 100%;
+    mask-position: 0;
+    mask-repeat: no-repeat;
+}
+
 .fade-in {
     animation: mask-move-in 2s ease-in forwards;
 }
 
 .fade-out {
     animation: mask-move-out 2s ease-out forwards;
+}
+
+.fade-in-left-to-right {
+    animation: mask-move-in-left-to-right 2s ease-in forwards;
+}
+
+.fade-out-right-to-left {
+    animation: mask-move-out-right-to-left 1.5s ease-out forwards;
 }
 
 @keyframes mask-move-in {
@@ -104,6 +173,27 @@ font-family: 'Spectral SC', serif;
     }
 }
 
+@keyframes mask-move-in-left-to-right {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;    
+    }
+    to {
+        -webkit-mask-position: 0;
+        mask-position: 0;    
+    }
+}
+
+@keyframes mask-move-out-right-to-left {
+    from {
+        -webkit-mask-position: 0;
+        mask-position: 0;    
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;    
+    }
+}
 
 /* .civ-controls {
 
@@ -141,4 +231,19 @@ font-family: 'Spectral SC', serif;
 
 .not-faded {
     opacity: 1;
+}
+
+.age-upgrades {
+    display: inline-block;
+    width: 14rem;
+}
+
+.disabled-upgrade::before {
+    display: inline-flex;
+    content: '';
+    width: inherit;
+    height: inherit;
+    background: red;
+    border-radius: inherit;
+    opacity: 0.5;
 }
