@@ -1,4 +1,5 @@
 import { AoE2Config } from "./aoe2-config";
+import { BlacksmithUpgrades } from "./upgrade-enums";
 
 export class UpgradeChanger {
     data: any;
@@ -7,7 +8,7 @@ export class UpgradeChanger {
     constructor(upgradeData: any, aoe2Config: AoE2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
-        this.createBlackSmithUpgradesElement("Aztecs");
+        this.createBlackSmithUpgradesElement("Aztecs", "");
     }
 
     public fadeIn(civName: string) {
@@ -76,8 +77,17 @@ export class UpgradeChanger {
         return template;
     }
 
-    createBlackSmithUpgradesElement(civName: string): JQuery<HTMLElement> {
+    public createBlackSmithUpgradesPanel(civName: string): JQuery<HTMLElement> {
         const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-background', 'mask-img']);
+        Object.keys(BlacksmithUpgrades).forEach((upgrade) => {
+            template.append(this.createBlackSmithUpgradesElement(civName, upgrade));
+        });
+        return template;
+    }
+
+    private createBlackSmithUpgradesElement(civName: string, upgrade: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName}-upgrade-blacksmith"></div>`).addClass(['div-background', 'mask-img']);
+
         return template;
     }
 }
