@@ -98,12 +98,42 @@ font-family: 'Spectral SC', serif;
     mask-repeat: no-repeat;
 }
 
+.mask-img-horizontal {
+    -webkit-mask-image: linear-gradient(to left, 
+        transparent 33.3%, 
+        hsl(0, 0%, 100%, 0) 33.4%, 
+        hsl(0, 0%, 100%, .9) 66.6%, 
+        hsl(0, 0%, 100%, .9) 100%
+    );
+    -webkit-mask-size: 300% 100%;
+    -webkit-mask-position: 0;
+    -webkit-mask-repeat: no-repeat;
+
+    mask-image: linear-gradient(to left, 
+        transparent 33.3%, 
+        hsl(0, 0%, 100%, 0) 33.4%, 
+        hsl(0, 0%, 100%, .9) 66.6%, 
+        hsl(0, 0%, 100%, .9) 100%
+    );
+    mask-size: 300% 100%;
+    mask-position: 0;
+    mask-repeat: no-repeat;
+}
+
 .fade-in {
     animation: mask-move-in 2s ease-in forwards;
 }
 
 .fade-out {
     animation: mask-move-out 2s ease-out forwards;
+}
+
+.fade-in-left-to-right {
+    animation: mask-move-in-left-to-right 2s ease-in forwards;
+}
+
+.fade-out-right-to-left {
+    animation: mask-move-out-right-to-left 2s ease-out forwards;
 }
 
 @keyframes mask-move-in {
@@ -128,6 +158,27 @@ font-family: 'Spectral SC', serif;
     }
 }
 
+@keyframes mask-move-in-left-to-right {
+    from {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;    
+    }
+    to {
+        -webkit-mask-position: 0;
+        mask-position: 0;    
+    }
+}
+
+@keyframes mask-move-out-right-to-left {
+    from {
+        -webkit-mask-position: 0;
+        mask-position: 0;    
+    }
+    to {
+        -webkit-mask-position: 100% 0;
+        mask-position: 100% 0;    
+    }
+}
 
 /* .civ-controls {
 
@@ -170,4 +221,14 @@ font-family: 'Spectral SC', serif;
 .age-upgrades {
     display: inline-block;
     width: 14rem;
+}
+
+.disabled-upgrade::before {
+    display: inline-flex;
+    content: '';
+    width: inherit;
+    height: inherit;
+    background: red;
+    border-radius: inherit;
+    opacity: 0.5;
 }

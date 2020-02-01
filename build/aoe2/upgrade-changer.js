@@ -10,20 +10,20 @@ class UpgradeChanger {
     fadeIn(civName) {
         const htmlElement = this.createHtmlElement(civName);
         const upgradesToDisable = this.data.upgradesToDisable[civName];
-        htmlElement.addClass('fade-in');
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName);
-                }, this.aoe2Config.visibleDuration * 1000);
-            }
-        }
+        htmlElement.addClass('fade-in-left-to-right');
+        // if (!this.aoe2Config.socketMode) {
+        //     if (this.aoe2Config.visibleDuration) {
+        //         setTimeout(() => {
+        //             this.fadeOut(civName);
+        //         }, this.aoe2Config.visibleDuration * 1000);
+        //     }
+        // }
         this.addToBody(htmlElement);
     }
     fadeOut(civName) {
         const htmlElement = $(`.div-upgrade-background-wrapper`);
-        htmlElement.removeClass('fade-in');
-        htmlElement.addClass('fade-out');
+        htmlElement.removeClass('fade-in-left-to-right');
+        htmlElement.addClass('fade-out-right-to-left');
         setTimeout(() => {
             htmlElement.remove();
         }, this.aoe2Config.fadeOutDuration * 1000);
@@ -38,7 +38,7 @@ class UpgradeChanger {
         $('#civ-desc').html('');
     }
     createHtmlElement(civName) {
-        const template = $(`<div id="${civName}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-vertical']);
+        const template = $(`<div id="${civName}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
         template.append(this.createBlackSmithUpgradesPanel(civName));
         return template;
     }
@@ -78,12 +78,21 @@ class UpgradeChanger {
         return groupOfIcons;
     }
     createUpgradeIcon(divId, upgrade) {
+        let civName = divId.split('-')[0];
+        civName = civName.charAt(0).toUpperCase().concat(civName.substring(1));
         const template = $(`<div id="${divId}"></div>`).addClass(['div-upgrade']);
-        template.css({
+        const disabledUpgrade = this.data.upgradesToDisable[civName].find((disabledUpgrade) => {
+            return disabledUpgrade.toLowerCase() === upgrade;
+        });
+        const css = {
             "background": `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/upgrade-icons/${upgrade}.png")`,
             "background-size": "contain",
             "background-repeat": "no-repeat",
-        });
+        };
+        if (!!disabledUpgrade) {
+            template.addClass('disabled-upgrade');
+        }
+        template.css(css);
         return template;
     }
 }
