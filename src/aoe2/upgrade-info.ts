@@ -1,4 +1,4 @@
-const civBreakdown = JSON.parse(`{
+export const civUpgrades = JSON.parse(`{
     "Aztecs": {
       "disableHorses": true,
       "enabled": {

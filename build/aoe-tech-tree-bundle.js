@@ -132,13 +132,14 @@ class CivChangerClient {
 }
 exports.CivChangerClient = CivChangerClient;
 
-},{"../enums":7}],4:[function(require,module,exports){
+},{"../enums":8}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class TechTreeCivChanger {
     constructor(techData, aoe2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
+        this.fadeIn("Aztecs");
     }
     listenForUrlChanges() {
         this.aoe2Config.setConfigFromHash();
@@ -171,13 +172,13 @@ class TechTreeCivChanger {
         htmlElement.find('.civ-desc').html(civDesc);
         htmlElement.removeClass('fade-out');
         htmlElement.addClass('fade-in');
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName);
-                }, this.aoe2Config.visibleDuration * 1000);
-            }
-        }
+        // if (!this.aoe2Config.socketMode) {
+        //     if (this.aoe2Config.visibleDuration) {
+        //         setTimeout(() => {
+        //             this.fadeOut(civName);
+        //         }, this.aoe2Config.visibleDuration * 1000);
+        //     }
+        // }
         this.addToBody(htmlElement);
     }
     fadeOut(civName) {
@@ -230,11 +231,21 @@ class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
-        this.fadeIn("Aztecs");
+        setTimeout(() => {
+            this.fadeIn("Aztecs", 'bs');
+        }, 100);
+        setTimeout(() => {
+            this.fadeIn("Aztecs", 'uni');
+        }, 600);
+        setTimeout(() => {
+            this.fadeIn("Aztecs", 'monestary');
+        }, 1100);
+        setTimeout(() => {
+            this.fadeIn("Aztecs", 'dock');
+        }, 1600);
     }
-    fadeIn(civName) {
-        const htmlElement = this.createHtmlElement(civName);
-        const upgradesToDisable = this.data.upgradesToDisable[civName];
+    fadeIn(civName, building) {
+        const htmlElement = this.createHtmlElement(civName, building);
         htmlElement.addClass('fade-in-left-to-right');
         // if (!this.aoe2Config.socketMode) {
         //     if (this.aoe2Config.visibleDuration) {
@@ -262,9 +273,28 @@ class UpgradeChanger {
         $('#civ-name').text('');
         $('#civ-desc').html('');
     }
-    createHtmlElement(civName) {
+    createHtmlElement(civName, upgradeBuilding) {
         const template = $(`<div id="${civName}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
-        template.append(this.createBlackSmithUpgradesPanel(civName));
+        let delay = 0;
+        if (upgradeBuilding === 'bs') {
+            template.append(this.createBlackSmithUpgradesPanel(civName));
+            delay = 0.5;
+        }
+        else if (upgradeBuilding === 'uni') {
+            template.append(this.createUniversityUpgradesPanel(civName));
+            delay = 1;
+        }
+        else if (upgradeBuilding === 'monestary') {
+            template.append(this.createMonestaryUpgradesPanel(civName));
+            delay = 1.5;
+        }
+        else if (upgradeBuilding === 'dock') {
+            template.append(this.createDockUpgradesPanel(civName));
+            delay = 2;
+        }
+        // template.css({
+        //     "animation-delay": `${delay}s`
+        // });
         return template;
     }
     createBlackSmithUpgradesPanel(civName) {
@@ -272,6 +302,28 @@ class UpgradeChanger {
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+    createUniversityUpgradesPanel(civName) {
+        const template = $(`<div id="${civName}-upgrades-university"></div>`).addClass(['div-upgrade-background']);
+        template.append(this.getUniversityUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getUniversityUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+    createMonestaryUpgradesPanel(civName) {
+        const template = $(`<div id="${civName}-upgrades-monestary"></div>`).addClass(['div-upgrade-background']);
+        template.css({
+            "padding-top": '3rem'
+        });
+        template.append(this.getMonestaryUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getMonestaryUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+    createDockUpgradesPanel(civName) {
+        const template = $(`<div id="${civName}-upgrades-dock"></div>`).addClass(['div-upgrade-background']);
+        template.append(this.getDockUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()));
+        template.append(this.getDockUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getDockUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
         return template;
     }
     getBlacksmithUpgradesByAge(civ, age) {
@@ -302,21 +354,118 @@ class UpgradeChanger {
         }
         return groupOfIcons;
     }
+    getUniversityUpgradesByAge(civ, age) {
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-univ-upgrades"></div>`).addClass('age-upgrades');
+        groupOfIcons.css({
+            "width": "18rem"
+        });
+        if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Masonry}`, upgrade_enums_1.UniversityUpgrades.Masonry.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Fortified_Wall}`, upgrade_enums_1.UniversityUpgrades.Fortified_Wall.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Ballistics}`, upgrade_enums_1.UniversityUpgrades.Ballistics.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Guard_Tower}`, upgrade_enums_1.UniversityUpgrades.Guard_Tower.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Heated_Shot}`, upgrade_enums_1.UniversityUpgrades.Heated_Shot.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Murder_Holes}`, upgrade_enums_1.UniversityUpgrades.Murder_Holes.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Treadmill_Crane}`, upgrade_enums_1.UniversityUpgrades.Treadmill_Crane.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Architecture}`, upgrade_enums_1.UniversityUpgrades.Architecture.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Chemistry}`, upgrade_enums_1.UniversityUpgrades.Chemistry.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Bombard_Tower}`, upgrade_enums_1.UniversityUpgrades.Bombard_Tower.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Siege_Engineers}`, upgrade_enums_1.UniversityUpgrades.Siege_Engineers.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Keep}`, upgrade_enums_1.UniversityUpgrades.Keep.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Arrowslits}`, upgrade_enums_1.UniversityUpgrades.Arrowslits.toLowerCase()));
+        }
+        return groupOfIcons;
+    }
+    getMonestaryUpgradesByAge(civ, age) {
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-univ-upgrades"></div>`).addClass('age-upgrades');
+        if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.css({
+                "width": "22rem"
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Redemption}`, upgrade_enums_1.MonestaryUpgrades.Redemption.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Fervor}`, upgrade_enums_1.MonestaryUpgrades.Fervor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Sanctity}`, upgrade_enums_1.MonestaryUpgrades.Sanctity.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Atonement}`, upgrade_enums_1.MonestaryUpgrades.Atonement.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Herbal_Medicine}`, upgrade_enums_1.MonestaryUpgrades.Herbal_Medicine.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Heresy}`, upgrade_enums_1.MonestaryUpgrades.Heresy.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.css({
+                "width": "18rem"
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Block_Printing}`, upgrade_enums_1.MonestaryUpgrades.Block_Printing.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Illumination}`, upgrade_enums_1.MonestaryUpgrades.Illumination.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Faith}`, upgrade_enums_1.MonestaryUpgrades.Faith.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.MonestaryUpgrades.Theocracy}`, upgrade_enums_1.MonestaryUpgrades.Theocracy.toLowerCase()));
+        }
+        return groupOfIcons;
+    }
+    getDockUpgradesByAge(civ, age) {
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-dock-upgrades"></div>`).addClass('age-upgrades');
+        if (age === upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()) {
+            groupOfIcons.css({
+                "width": "8rem"
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.War_Galley_Fire_Ship_and_Demolition_Ship}`, upgrade_enums_1.DockUpgrades.War_Galley_Fire_Ship_and_Demolition_Ship.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.css({
+                "width": "9rem"
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Gillnets}`, upgrade_enums_1.DockUpgrades.Gillnets.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Careening}`, upgrade_enums_1.DockUpgrades.Careening.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.css({
+                "width": "21rem"
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship}`, upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Fast_Fire_Ship}`, upgrade_enums_1.DockUpgrades.Fast_Fire_Ship.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Galleon}`, upgrade_enums_1.DockUpgrades.Galleon.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Cannon_Galleon}`, upgrade_enums_1.DockUpgrades.Cannon_Galleon.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Elite_Cannon_Galleon}`, upgrade_enums_1.DockUpgrades.Elite_Cannon_Galleon.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Dry_Dock}`, upgrade_enums_1.DockUpgrades.Dry_Dock.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Shipwright}`, upgrade_enums_1.DockUpgrades.Shipwright.toLowerCase()));
+        }
+        return groupOfIcons;
+    }
     createUpgradeIcon(divId, upgrade) {
         let civName = divId.split('-')[0];
         civName = civName.charAt(0).toUpperCase().concat(civName.substring(1));
         const template = $(`<div id="${divId}"></div>`).addClass(['div-upgrade']);
-        const disabledUpgrade = this.data.upgradesToDisable[civName].find((disabledUpgrade) => {
+        const disabledUpgrade = this.data[civName].disabled.techs.find((disabledUpgrade) => {
             return disabledUpgrade.toLowerCase() === upgrade;
         });
+        const disabledUnit = this.data[civName].disabled.units.find((disabledUpgrade) => {
+            return disabledUpgrade.toLowerCase() === upgrade;
+        });
+        const horsesDisabled = this.data[civName].disableHorses;
+        if (!!disabledUpgrade) { // explicit disabled techs
+            template.addClass('disabled-upgrade');
+        }
+        else if (horsesDisabled && upgrade.toLowerCase().includes('barding')) { // meso civs no horses
+            template.addClass('disabled-upgrade');
+        }
+        else if (upgrade.toLowerCase().includes('war galley')) {
+            upgrade = 'war galley';
+        }
+        else if (!!disabledUnit) {
+            template.addClass('disabled-upgrade');
+        }
         const css = {
-            "background": `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/upgrade-icons/${upgrade}.png")`,
+            "background": `url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/${upgrade}.png")`,
             "background-size": "contain",
             "background-repeat": "no-repeat",
         };
-        if (!!disabledUpgrade) {
-            template.addClass('disabled-upgrade');
-        }
         template.css(css);
         return template;
     }
@@ -484,6 +633,1404 @@ var ArcherUpgrades;
 },{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.civUpgrades = JSON.parse(`{
+    "Aztecs": {
+      "disableHorses": true,
+      "enabled": {
+        "units": [
+          "Eagle Scout",
+          "Eagle Warrior",
+          "Elite Eagle Warrior"
+        ],
+        "unique": [
+          "Jaguar Warrior",
+          "Elite Jaguar Warrior",
+          "Atlatl",
+          "Garland Wars"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Halberdier",
+          "Cannon Galleon",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship",
+          "Galleon",
+          "Heavy Scorpion",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Hoardings",
+          "Ring Archer Armor",
+          "Masonry",
+          "Architecture",
+          "Bombard Tower",
+          "Keep",
+          "Two-Man Saw",
+          "Guilds"
+        ]
+      },
+      "monkPrefix": "meso_"
+    },
+    "Berbers": {
+      "enabled": {
+        "units": [
+          "Genitour",
+          "Elite Genitour"
+        ],
+        "unique": [
+          "Camel Archer",
+          "Elite Camel Archer",
+          "Kasbah",
+          "Maghrabi Camels"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Bombard Tower",
+          "Keep"
+        ],
+        "units": [
+          "Arbalester",
+          "Halberdier",
+          "Paladin",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Shipwright",
+          "Sanctity",
+          "Block Printing",
+          "Sappers",
+          "Architecture",
+          "Bombard Tower",
+          "Keep",
+          "Two-Man Saw"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Britons": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Hussar",
+          "Paladin",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Elite Cannon Galleon",
+          "Siege Ram",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Bloodlines",
+          "Redemption",
+          "Atonement",
+          "Heresy",
+          "Bombard Tower",
+          "Treadmill Crane",
+          "Stone Shaft Mining",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Longbowman",
+          "Elite Longbowman",
+          "Yeomen",
+          "Warwolf"
+        ]
+      }
+    },
+    "Bulgarians": {
+      "enabled": {
+        "buildings": [
+          "Krepost"
+        ],
+        "unique": [
+          "Konnik",
+          "Elite Konnik",
+          "Stirrups",
+          "Bagains"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Fortified Wall",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Crossbowman",
+          "Arbalester",
+          "Hand Cannoneer",
+          "Champion",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Bombard Cannon",
+          "Fast Fire Ship",
+          "Heavy Demo Ship",
+          "Elite Cannon Galleon"
+        ],
+        "techs": [
+          "Ring Archer Armor",
+          "Dry Dock",
+          "Shipwright",
+          "Fortified Wall",
+          "Treadmill Crane",
+          "Arrowslits",
+          "Bombard Tower",
+          "Hoardings",
+          "Sappers",
+          "Atonement",
+          "Sanctity",
+          "Faith",
+          "Block Printing",
+          "Two-Man Saw",
+          "Guilds"
+        ]
+      }
+    },
+    "Burmese": {
+      "enabled": {
+        "units": [
+          "Battle Elephant",
+          "Elite Battle Elephant"
+        ],
+        "unique": [
+          "Arambai",
+          "Elite Arambai",
+          "Howdah",
+          "Manipur Cavalry"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Hand Cannoneer",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Fast Fire Ship",
+          "Heavy Demo Ship",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Shipwright",
+          "Heresy",
+          "Hoardings",
+          "Sappers",
+          "Leather Archer Armor",
+          "Ring Archer Armor",
+          "Bombard Tower",
+          "Arrowslits",
+          "Stone Shaft Mining"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Byzantines": {
+      "disabled": {
+        "units": [
+          "Heavy Scorpion",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Bloodlines",
+          "Herbal Medicine",
+          "Sappers",
+          "Blast Furnace",
+          "Masonry",
+          "Architecture",
+          "Siege Engineers",
+          "Heated Shot",
+          "Treadmill Crane"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Cataphract",
+          "Elite Cataphract",
+          "Greek Fire",
+          "Logistica"
+        ]
+      }
+    },
+    "Celts": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Hand Cannoneer",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Fast Fire Ship",
+          "Elite Cannon Galleon",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Squires",
+          "Bloodlines",
+          "Redemption",
+          "Illumination",
+          "Atonement",
+          "Block Printing",
+          "Theocracy",
+          "Ring Archer Armor",
+          "Bracer",
+          "Plate Barding Armor",
+          "Architecture",
+          "Bombard Tower",
+          "Two-Man Saw",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Woad Raider",
+          "Elite Woad Raider",
+          "Stronghold",
+          "Furor Celtica"
+        ]
+      }
+    },
+    "Chinese": {
+      "disabled": {
+        "units": [
+          "Hand Cannoneer",
+          "Hussar",
+          "Paladin",
+          "Fast Fire Ship",
+          "Elite Cannon Galleon",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Heresy",
+          "Hoardings",
+          "Siege Engineers",
+          "Treadmill Crane",
+          "Guilds",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Chu Ko Nu",
+          "Elite Chu Ko Nu",
+          "Great Wall",
+          "Rocketry"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Cumans": {
+      "enabled": {
+        "units": [
+          "Steppe Lancer",
+          "Elite Steppe Lancer"
+        ],
+        "unique": [
+          "Kipchak",
+          "Elite Kipchak",
+          "Steppe Husbandry",
+          "Cuman Mercenaries"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Gate",
+          "Stone Wall",
+          "Fortified Wall",
+          "Guard Tower",
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Hand Cannoneer",
+          "Heavy Camel Rider",
+          "Heavy Scorpion",
+          "Bombard Cannon",
+          "Cannon Galleon",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship"
+        ],
+        "techs": [
+          "Bracer",
+          "Dry Dock",
+          "Shipwright",
+          "Fortified Wall",
+          "Guard Tower",
+          "Treadmill Crane",
+          "Architecture",
+          "Siege Engineers",
+          "Keep",
+          "Arrowslits",
+          "Bombard Tower",
+          "Illumination",
+          "Block Printing",
+          "Theocracy",
+          "Stone Shaft Mining",
+          "Husbandry"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Ethiopians": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Champion",
+          "Paladin",
+          "Fast Fire Ship",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Bloodlines",
+          "Redemption",
+          "Block Printing",
+          "Hoardings",
+          "Plate Barding Armor",
+          "Treadmill Crane",
+          "Arrowslits",
+          "Bombard Tower",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Shotel Warrior",
+          "Elite Shotel Warrior",
+          "Royal Heirs",
+          "Torsion Engines"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Franks": {
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Hussar",
+          "Elite Cannon Galleon",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Bloodlines",
+          "Shipwright",
+          "Redemption",
+          "Atonement",
+          "Sappers",
+          "Ring Archer Armor",
+          "Bracer",
+          "Heated Shot",
+          "Keep",
+          "Bombard Tower",
+          "Stone Shaft Mining",
+          "Two-Man Saw",
+          "Guilds"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Throwing Axeman",
+          "Elite Throwing Axeman",
+          "Chivalry",
+          "Bearded Axe"
+        ]
+      }
+    },
+    "Goths": {
+      "disabled": {
+        "buildings": [
+          "Guard Tower",
+          "Keep",
+          "Bombard Tower",
+          "Gate",
+          "Stone Wall",
+          "Fortified Wall"
+        ],
+        "units": [
+          "Arbalester",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Elite Cannon Galleon",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Dry Dock",
+          "Guard Tower",
+          "Keep",
+          "Bombard Tower",
+          "Fortified Wall",
+          "Redemption",
+          "Atonement",
+          "Block Printing",
+          "Heresy",
+          "Hoardings",
+          "Plate Barding Armor",
+          "Plate Mail Armor",
+          "Siege Engineers",
+          "Treadmill Crane",
+          "Arrowslits",
+          "Gold Shaft Mining",
+          "Supplies"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Huskarl",
+          "Elite Huskarl",
+          "Anarchy",
+          "Perfusion"
+        ]
+      }
+    },
+    "Huns": {
+      "disabled": {
+        "buildings": [
+          "Guard Tower",
+          "Keep",
+          "Bombard Tower",
+          "Fortified Wall"
+        ],
+        "units": [
+          "Arbalester",
+          "Hand Cannoneer",
+          "Champion",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Fast Fire Ship",
+          "Cannon Galleon",
+          "Elite Cannon Galleon",
+          "Onager",
+          "Siege Onager",
+          "Heavy Scorpion",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Shipwright",
+          "Guard Tower",
+          "Keep",
+          "Bombard Tower",
+          "Redemption",
+          "Herbal Medicine",
+          "Block Printing",
+          "Theocracy",
+          "Hoardings",
+          "Ring Archer Armor",
+          "Plate Mail Armor",
+          "Fortified Wall",
+          "Heated Shot",
+          "Treadmill Crane",
+          "Architecture",
+          "Siege Engineers",
+          "Arrowslits",
+          "Stone Shaft Mining",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Tarkan",
+          "Elite Tarkan",
+          "Marauders",
+          "Atheism"
+        ]
+      }
+    },
+    "Incas": {
+      "disableHorses": true,
+      "enabled": {
+        "units": [
+          "Slinger"
+        ],
+        "unique": [
+          "Kamayuk",
+          "Elite Kamayuk",
+          "Andean Sling",
+          "Couriers"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Cannon Galleon",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Bombard Tower",
+          "Atonement",
+          "Fervor",
+          "Architecture",
+          "Two-Man Saw"
+        ]
+      },
+      "monkPrefix": "meso_"
+    },
+    "Indians": {
+      "enabled": {
+        "units": [
+          "Imperial Camel Rider"
+        ],
+        "unique": [
+          "Elephant Archer",
+          "Elite Elephant Archer",
+          "Sultans",
+          "Shatagni"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Knight",
+          "Cavalier",
+          "Paladin",
+          "Fast Fire Ship",
+          "Heavy Scorpion",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Shipwright",
+          "Keep",
+          "Bombard Tower",
+          "Atonement",
+          "Heresy",
+          "Sappers",
+          "Plate Mail Armor",
+          "Architecture",
+          "Arrowslits",
+          "Treadmill Crane",
+          "Crop Rotation"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Italians": {
+      "enabled": {
+        "units": [
+          "Condottiero"
+        ],
+        "unique": [
+          "Genoese Crossbowman",
+          "Elite Genoese Crossbowman",
+          "Pavise",
+          "Silk Road"
+        ]
+      },
+      "disabled": {
+        "units": [
+          "Heavy Cav Archer",
+          "Halberdier",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Heavy Demo Ship",
+          "Heavy Scorpion",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Heresy",
+          "Sappers",
+          "Siege Engineers",
+          "Gold Shaft Mining"
+        ]
+      }
+    },
+    "Japanese": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hussar",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Heavy Demo Ship",
+          "Siege Ram",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Bombard Tower",
+          "Heresy",
+          "Hoardings",
+          "Sappers",
+          "Plate Barding Armor",
+          "Architecture",
+          "Heated Shot",
+          "Stone Shaft Mining",
+          "Guilds",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Samurai",
+          "Elite Samurai",
+          "Yasama",
+          "Kataparuto"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Khmer": {
+      "enabled": {
+        "units": [
+          "Battle Elephant",
+          "Elite Battle Elephant"
+        ],
+        "unique": [
+          "Ballista Elephant",
+          "Elite Ballista Elephant",
+          "Tusk Swords",
+          "Double Crossbow"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Champion",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Heavy Demo Ship",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Squires",
+          "Bombard Tower",
+          "Atonement",
+          "Heresy",
+          "Block Printing",
+          "Shipwright",
+          "Plate Mail Armor",
+          "Arrowslits",
+          "Two-Man Saw",
+          "Guilds"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Koreans": {
+      "enabled": {
+        "units": [
+          "Turtle Ship",
+          "Elite Turtle Ship"
+        ],
+        "unique": [
+          "War Wagon",
+          "Elite War Wagon",
+          "Panokseon",
+          "Shinkichon"
+        ]
+      },
+      "disabled": {
+        "units": [
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Elite Cannon Galleon",
+          "Demolition Raft",
+          "Demolition Ship",
+          "Heavy Demo Ship",
+          "Siege Ram",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Bloodlines",
+          "Redemption",
+          "Atonement",
+          "Heresy",
+          "Illumination",
+          "Hoardings",
+          "Sappers",
+          "Blast Furnace",
+          "Plate Barding Armor",
+          "Crop Rotation"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Lithuanians": {
+      "disabled": {
+        "units": [
+          "Arbalester",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Siege Ram",
+          "Siege Onager",
+          "Heavy Scorpion",
+          "Heavy Demo Ship"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Plate Mail Armor",
+          "Shipwright",
+          "Siege Engineers",
+          "Arrowslits",
+          "Sappers",
+          "Gold Shaft Mining"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Leitis",
+          "Elite Leitis",
+          "Hill Forts",
+          "Tower Shields"
+        ]
+      }
+    },
+    "Magyars": {
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower",
+          "Fortified Wall"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship",
+          "Siege Ram",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Squires",
+          "Keep",
+          "Bombard Tower",
+          "Fortified Wall",
+          "Redemption",
+          "Atonement",
+          "Faith",
+          "Plate Mail Armor",
+          "Architecture",
+          "Arrowslits",
+          "Stone Shaft Mining",
+          "Guilds"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Magyar Huszar",
+          "Elite Magyar Huszar",
+          "Corvinian Army",
+          "Recurve Bow"
+        ]
+      }
+    },
+    "Malay": {
+      "enabled": {
+        "units": [
+          "Battle Elephant",
+          "Elite Battle Elephant"
+        ],
+        "unique": [
+          "Karambit Warrior",
+          "Elite Karambit Warrior",
+          "Thalassocracy",
+          "Forced Levy"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Fortified Wall"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Heavy Cav Archer",
+          "Champion",
+          "Hussar",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Heavy Demo Ship",
+          "Siege Ram",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Bloodlines",
+          "Fortified Wall",
+          "Fervor",
+          "Theocracy",
+          "Hoardings",
+          "Chain Barding Armor",
+          "Plate Barding Armor",
+          "Architecture",
+          "Arrowslits",
+          "Treadmill Crane",
+          "Two-Man Saw"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Malians": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Halberdier",
+          "Hussar",
+          "Paladin",
+          "Galleon",
+          "Elite Cannon Galleon",
+          "Siege Ram",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Shipwright",
+          "Bombard Tower",
+          "Bracer",
+          "Illumination",
+          "Blast Furnace",
+          "Siege Engineers",
+          "Arrowslits",
+          "Two-Man Saw"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Gbeto",
+          "Elite Gbeto",
+          "Tigui",
+          "Farimba"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Mayans": {
+      "disableHorses": true,
+      "enabled": {
+        "units": [
+          "Eagle Scout",
+          "Eagle Warrior",
+          "Elite Eagle Warrior"
+        ],
+        "unique": [
+          "Plumed Archer",
+          "Elite Plumed Archer",
+          "Obsidian Arrows",
+          "El Dorado"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Champion",
+          "Cannon Galleon",
+          "Elite Cannon Galleon",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Bombard Tower",
+          "Redemption",
+          "Illumination",
+          "Siege Engineers",
+          "Arrowslits",
+          "Gold Shaft Mining"
+        ]
+      },
+      "monkPrefix": "meso_"
+    },
+    "Mongols": {
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Halberdier",
+          "Paladin",
+          "Elite Cannon Galleon",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Dry Dock",
+          "Keep",
+          "Bombard Tower",
+          "Redemption",
+          "Illumination",
+          "Sanctity",
+          "Block Printing",
+          "Theocracy",
+          "Ring Archer Armor",
+          "Plate Barding Armor",
+          "Architecture",
+          "Heated Shot",
+          "Treadmill Crane",
+          "Arrowslits",
+          "Two-Man Saw",
+          "Guilds",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Mangudai",
+          "Elite Mangudai",
+          "Nomads",
+          "Drill"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Persians": {
+      "disabled": {
+        "buildings": [
+          "Fortified Wall",
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Two-Handed Swordsman",
+          "Champion",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Shipwright",
+          "Fortified Wall",
+          "Keep",
+          "Bombard Tower",
+          "Redemption",
+          "Illumination",
+          "Atonement",
+          "Heresy",
+          "Sanctity",
+          "Bracer",
+          "Siege Engineers",
+          "Arrowslits",
+          "Treadmill Crane"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "War Elephant",
+          "Elite War Elephant",
+          "Kamandaran",
+          "Mahouts"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Portuguese": {
+      "enabled": {
+        "buildings": [
+          "Feitoria"
+        ],
+        "units": [
+          "Caravel",
+          "Elite Caravel"
+        ],
+        "unique": [
+          "Organ Gun",
+          "Elite Organ Gun",
+          "Carrack",
+          "Arquebus"
+        ]
+      },
+      "disabled": {
+        "units": [
+          "Heavy Cav Archer",
+          "Hussar",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Fast Fire Ship",
+          "Siege Ram",
+          "Siege Onager",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Squires",
+          "Shipwright",
+          "Illumination",
+          "Hoardings",
+          "Arrowslits",
+          "Gold Shaft Mining"
+        ]
+      }
+    },
+    "Saracens": {
+      "disabled": {
+        "buildings": [
+          "Bombard Tower"
+        ],
+        "units": [
+          "Halberdier",
+          "Cavalier",
+          "Paladin",
+          "Fast Fire Ship",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Shipwright",
+          "Bombard Tower",
+          "Sappers",
+          "Architecture",
+          "Heated Shot",
+          "Stone Shaft Mining",
+          "Guilds",
+          "Crop Rotation"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Mameluke",
+          "Elite Mameluke",
+          "Madrasah",
+          "Zealotry"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Slavs": {
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Arbalester",
+          "Hand Cannoneer",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Elite Cannon Galleon",
+          "Heavy Demo Ship",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Shipwright",
+          "Keep",
+          "Bombard Tower",
+          "Heresy",
+          "Bracer",
+          "Architecture",
+          "Arrowslits",
+          "Heated Shot",
+          "Stone Shaft Mining",
+          "Guilds"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Boyar",
+          "Elite Boyar",
+          "Orthodoxy",
+          "Druzhina"
+        ]
+      }
+    },
+    "Spanish": {
+      "enabled": {
+        "units": [
+          "Missionary"
+        ],
+        "unique": [
+          "Conquistador",
+          "Elite Conquistador",
+          "Inquisition",
+          "Supremacy"
+        ]
+      },
+      "disabled": {
+        "units": [
+          "Crossbowman",
+          "Arbalester",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Siege Onager",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Siege Engineers",
+          "Heated Shot",
+          "Treadmill Crane",
+          "Gold Shaft Mining",
+          "Crop Rotation"
+        ]
+      }
+    },
+    "Tatars": {
+      "enabled": {
+        "units": [
+          "Steppe Lancer",
+          "Elite Steppe Lancer"
+        ],
+        "unique": [
+          "Keshik",
+          "Elite Keshik",
+          "Silk Armor",
+          "Timurid Siegecraft"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Keep"
+        ],
+        "units": [
+          "Arbalester",
+          "Champion",
+          "Halberdier",
+          "Paladin",
+          "Siege Onager",
+          "Bombard Cannon",
+          "Heavy Demo Ship"
+        ],
+        "techs": [
+          "Chain Mail Armor",
+          "Plate Mail Armor",
+          "Shipwright",
+          "Architecture",
+          "Keep",
+          "Arrowslits",
+          "Hoardings",
+          "Redemption",
+          "Heresy",
+          "Sanctity",
+          "Faith",
+          "Theocracy",
+          "Stone Shaft Mining",
+          "Two-Man Saw"
+        ]
+      }
+    },
+    "Teutons": {
+      "disabled": {
+        "units": [
+          "Arbalester",
+          "Heavy Cav Archer",
+          "Light Cavalry",
+          "Hussar",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Elite Cannon Galleon",
+          "Siege Ram"
+        ],
+        "techs": [
+          "Thumb Ring",
+          "Parthian Tactics",
+          "Husbandry",
+          "Dry Dock",
+          "Shipwright",
+          "Bracer",
+          "Architecture",
+          "Gold Shaft Mining"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Teutonic Knight",
+          "Elite Teutonic Knight",
+          "Ironclad",
+          "Crenellations"
+        ]
+      }
+    },
+    "Turks": {
+      "disabled": {
+        "units": [
+          "Arbalester",
+          "Elite Skirmisher",
+          "Pikeman",
+          "Halberdier",
+          "Paladin",
+          "Fast Fire Ship",
+          "Onager",
+          "Siege Onager"
+        ],
+        "techs": [
+          "Herbal Medicine",
+          "Illumination",
+          "Block Printing",
+          "Stone Shaft Mining",
+          "Crop Rotation",
+          "Siege Engineers"
+        ]
+      },
+      "enabled": {
+        "unique": [
+          "Janissary",
+          "Elite Janissary",
+          "Sipahi",
+          "Artillery"
+        ]
+      },
+      "monkPrefix": "african_"
+    },
+    "Vietnamese": {
+      "enabled": {
+        "units": [
+          "Battle Elephant",
+          "Elite Battle Elephant",
+          "Imperial Skirmisher"
+        ],
+        "unique": [
+          "Rattan Archer",
+          "Elite Rattan Archer",
+          "Chatras",
+          "Paper Money"
+        ]
+      },
+      "disabled": {
+        "units": [
+          "Hand Cannoneer",
+          "Hussar",
+          "Paladin",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Fast Fire Ship",
+          "Siege Ram",
+          "Siege Onager",
+          "Heavy Scorpion"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Shipwright",
+          "Redemption",
+          "Heresy",
+          "Fervor",
+          "Blast Furnace",
+          "Masonry",
+          "Architecture",
+          "Gold Shaft Mining"
+        ]
+      },
+      "monkPrefix": "asian_"
+    },
+    "Vikings": {
+      "enabled": {
+        "units": [
+          "Longboat",
+          "Elite Longboat"
+        ],
+        "unique": [
+          "Berserk",
+          "Elite Berserk",
+          "Chieftains",
+          "Berserkergang"
+        ]
+      },
+      "disabled": {
+        "buildings": [
+          "Keep",
+          "Bombard Tower"
+        ],
+        "units": [
+          "Hand Cannoneer",
+          "Heavy Cav Archer",
+          "Halberdier",
+          "Hussar",
+          "Camel Rider",
+          "Heavy Camel Rider",
+          "Paladin",
+          "Fire Galley",
+          "Fire Ship",
+          "Fast Fire Ship",
+          "Siege Onager",
+          "Bombard Cannon"
+        ],
+        "techs": [
+          "Parthian Tactics",
+          "Bloodlines",
+          "Husbandry",
+          "Shipwright",
+          "Keep",
+          "Bombard Tower",
+          "Redemption",
+          "Herbal Medicine",
+          "Sanctity",
+          "Illumination",
+          "Theocracy",
+          "Plate Barding Armor",
+          "Stone Shaft Mining",
+          "Guilds"
+        ]
+      }
+    }
+  }`);
+
+},{}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var SocketEnums;
 (function (SocketEnums) {
     SocketEnums[SocketEnums["ClientRegister"] = 0] = "ClientRegister";
@@ -491,7 +2038,7 @@ var SocketEnums;
     SocketEnums[SocketEnums["AdminHideCiv"] = 2] = "AdminHideCiv";
 })(SocketEnums = exports.SocketEnums || (exports.SocketEnums = {}));
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const civ_changer_client_1 = require("./aoe2/civ-changer-client");
@@ -499,18 +2046,19 @@ const aoe2_config_1 = require("./aoe2/aoe2-config");
 const aoe2_api_1 = require("./aoe2/aoe2-api");
 const tech_tree_civ_changer_1 = require("./aoe2/tech-tree-civ-changer");
 const upgrade_changer_1 = require("./aoe2/upgrade-changer");
+const upgrade_info_1 = require("./aoe2/upgrade-info");
 let civChanger;
 let upgradeChanger;
 const aoe2Api = new aoe2_api_1.AoE2Api();
 const aoe2Config = new aoe2_config_1.AoE2Config();
-Promise.all([aoe2Api.getAoE2Data(), aoe2Api.getAoE2UpgradeData()]).then((results) => {
+Promise.all([aoe2Api.getAoE2Data()]).then((results) => {
     aoe2Config.setConfigFromQueryString();
     civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(results[0], aoe2Config);
-    upgradeChanger = new upgrade_changer_1.UpgradeChanger(results[1], aoe2Config);
+    upgradeChanger = new upgrade_changer_1.UpgradeChanger(upgrade_info_1.civUpgrades, aoe2Config);
     civChanger.listenForUrlChanges();
     if (aoe2Config.socketMode) {
         new civ_changer_client_1.CivChangerClient(civChanger, upgradeChanger, aoe2Config.clientId);
     }
 });
 
-},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4,"./aoe2/upgrade-changer":5}]},{},[8]);
+},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4,"./aoe2/upgrade-changer":5,"./aoe2/upgrade-info":7}]},{},[9]);

@@ -1,5 +1,6 @@
 "use strict";
-const civBreakdown = JSON.parse(`{
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.civUpgrades = JSON.parse(`{
     "Aztecs": {
       "disableHorses": true,
       "enabled": {

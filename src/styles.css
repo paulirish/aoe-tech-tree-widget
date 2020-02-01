@@ -4,23 +4,37 @@ font-family: 'Spectral SC', serif;
 */
 
 .tech-overlay-wrapper {
-    display: flex;
+    position: relative;
+    display: inline-block;
+    margin: -1rem;
+    z-index: 1;
+}
+
+.upgrade-overlay-wrapper {
+    position: fixed;
+    display: inline-block;
+    width: 45rem;
+    height: 38rem;   
+    margin-left: -1rem;
+    top: 1rem;
+    z-index: -2;
 }
 
 .div-background {
     display: inline-block;
-    width: 500px;
-    height: 600px;    
-    background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/popup_menu_bg_portrait.png");
+    width: 33rem;
+    height: 38rem;   
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/popup_menu_bg_portrait.png");
     background-size: contain;
     background-repeat: no-repeat;
 }
 
 .div-upgrade-background-wrapper {
+    margin: -1rem;
     display: inline-block;
     width: 45rem;
     height: 10rem;
-    background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/chatbar_bg.png");
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/chatbar_bg.png");
     background-size: contain;
     background-repeat: no-repeat;
     text-align: center;
