@@ -7,7 +7,7 @@
     "copy-admin": "copyfiles -f src/admin/**/* build/admin",
     "copy-aoe2": "copyfiles -f src/aoe2/**/* build/aoe2",
     "copy-sounds": "copyfiles -f src/sounds/*.mp3 build/sounds",
-    "copy-images": "copyfiles -f src/images/*.png build/images && copyfiles -f src/images/civ-emblems/*.png build/images/civ-emblems && copyfiles -f src/images/civ-icons/*.png build/images/civ-icons && copyfiles -f src/images/civ-unique-units/*.png build/images/civ-unique-units",
+    "copy-images": "copyfiles -f src/images/*.png build/images && copyfiles -f src/images/civ-emblems/*.png build/images/civ-emblems && copyfiles -f src/images/civ-icons/*.png build/images/civ-icons && copyfiles -f src/images/civ-unique-units/*.png build/images/civ-unique-units && copyfiles -f src/images/building-icons/*.png build/images/building-icons && copyfiles -f src/images/upgrade-icons/*.png build/images/upgrade-icons",
     "copy-index": "copyfiles -f src/*.html src/*.css build",
     "copy-all": "npm run copy-admin && npm run copy-aoe2 && npm run copy-sounds && npm run copy-images && npm run copy-index",
     "browserify-index": "browserify src/index.ts -p [ tsify --noImplicityAny ] > build/aoe-tech-tree-bundle.js",
