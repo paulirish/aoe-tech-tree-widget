@@ -1,15 +1,18 @@
 import { SocketEnums } from "../enums";
 import { TechTreeCivChanger } from "../aoe2/tech-tree-civ-changer";
+import { UpgradeChanger } from "./upgrade-changer";
 
 export class CivChangerClient {
 
     techTreeCivChanger: TechTreeCivChanger;
+    upgradeChanger: UpgradeChanger;
     socket: WebSocket;
     clientId: string = '';
 
-    constructor(techTreeCivChanger: TechTreeCivChanger, socketKey: string) {
+    constructor(techTreeCivChanger: TechTreeCivChanger, upgradeChanger: UpgradeChanger, socketKey: string) {
         this.clientId = socketKey;
         this.techTreeCivChanger = techTreeCivChanger;
+        this.upgradeChanger = upgradeChanger;
         this.socket = new WebSocket('wss://itsatreee.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);

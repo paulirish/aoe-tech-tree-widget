@@ -6,4 +6,10 @@ export class AoE2Api {
             return await response.json();
         });
     }
+
+    async getAoE2UpgradeData() {
+        return await fetch('https://treee.github.io/aoe-tech-tree-widget/build/aoe2/upgrades-to-disable.json').then(async (response) => {
+            return await response.json();
+        });
+    }
 }

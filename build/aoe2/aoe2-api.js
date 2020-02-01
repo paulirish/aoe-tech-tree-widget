@@ -18,5 +18,12 @@ class AoE2Api {
             }));
         });
     }
+    getAoE2UpgradeData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield fetch('https://treee.github.io/aoe-tech-tree-widget/build/aoe2/upgrades-to-disable.json').then((response) => __awaiter(this, void 0, void 0, function* () {
+                return yield response.json();
+            }));
+        });
+    }
 }
 exports.AoE2Api = AoE2Api;

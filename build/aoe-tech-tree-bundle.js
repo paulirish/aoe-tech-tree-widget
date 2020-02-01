@@ -19,6 +19,13 @@ class AoE2Api {
             }));
         });
     }
+    getAoE2UpgradeData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield fetch('https://treee.github.io/aoe-tech-tree-widget/build/aoe2/upgrades-to-disable.json').then((response) => __awaiter(this, void 0, void 0, function* () {
+                return yield response.json();
+            }));
+        });
+    }
 }
 exports.AoE2Api = AoE2Api;
 
@@ -72,10 +79,11 @@ exports.AoE2Config = AoE2Config;
 Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../enums");
 class CivChangerClient {
-    constructor(techTreeCivChanger, socketKey) {
+    constructor(techTreeCivChanger, upgradeChanger, socketKey) {
         this.clientId = '';
         this.clientId = socketKey;
         this.techTreeCivChanger = techTreeCivChanger;
+        this.upgradeChanger = upgradeChanger;
         this.socket = new WebSocket('wss://itsatreee.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);
@@ -124,7 +132,7 @@ class CivChangerClient {
 }
 exports.CivChangerClient = CivChangerClient;
 
-},{"../enums":5}],4:[function(require,module,exports){
+},{"../enums":6}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class TechTreeCivChanger {
@@ -217,6 +225,78 @@ exports.TechTreeCivChanger = TechTreeCivChanger;
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+class UpgradeChanger {
+    constructor(upgradeData, aoe2Config) {
+        this.data = upgradeData;
+        this.aoe2Config = aoe2Config;
+        this.createBlackSmithUpgradesElement("Aztecs");
+    }
+    fadeIn(civName) {
+        const htmlElement = this.createHtmlElement(civName);
+        const civKey = this.data.civs[civName];
+        const civDesc = this.data.key_value[civKey];
+        htmlElement.find('.civ-name').text(civName);
+        htmlElement.find('.civ-desc').html(civDesc);
+        htmlElement.removeClass('fade-out');
+        htmlElement.addClass('fade-in');
+        if (!this.aoe2Config.socketMode) {
+            if (this.aoe2Config.visibleDuration) {
+                setTimeout(() => {
+                    this.fadeOut(civName);
+                }, this.aoe2Config.visibleDuration * 1000);
+            }
+        }
+        this.addToBody(htmlElement);
+    }
+    fadeOut(civName) {
+        const htmlElement = $(`#${civName}-tech`);
+        htmlElement.removeClass('fade-in');
+        htmlElement.addClass('fade-out');
+        setTimeout(() => {
+            htmlElement.remove();
+        }, this.aoe2Config.fadeOutDuration * 1000);
+    }
+    addToBody(htmlElement) {
+        $('#upgrade-overlay-wrapper').append(htmlElement);
+    }
+    clearTemplate() {
+        $('#civ-name').text('');
+        $('#civ-desc').html('');
+    }
+    createHtmlElement(civName) {
+        const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img']);
+        // const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
+        // wrapperDiv.css({
+        //     'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
+        //     'background-size': 'contain'
+        // });
+        // const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+        // wrapperDiv.append(audio);
+        // (wrapperDiv.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
+        // const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
+        // const civIcon = $(`<div></div>`).addClass('civ-icon');
+        // civIcon.css({
+        //     'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civName.toLowerCase()}.png")`,
+        //     'background-size': 'contain',
+        //     'background-repeat': 'no-repeat'
+        // });
+        // const civNameText = $('<div></div>').addClass('civ-name');
+        // civIconAndName.append(civIcon.clone()).append(civNameText).append(civIcon.clone());
+        // wrapperDiv.append(civIconAndName);
+        // wrapperDiv.append($('<div></div>').addClass('civ-desc'));
+        // template.append(wrapperDiv);
+        return template;
+    }
+    createBlackSmithUpgradesElement(civName) {
+        const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-background', 'mask-img']);
+        return template;
+    }
+}
+exports.UpgradeChanger = UpgradeChanger;
+
+},{}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var SocketEnums;
 (function (SocketEnums) {
     SocketEnums[SocketEnums["ClientRegister"] = 0] = "ClientRegister";
@@ -224,23 +304,26 @@ var SocketEnums;
     SocketEnums[SocketEnums["AdminHideCiv"] = 2] = "AdminHideCiv";
 })(SocketEnums = exports.SocketEnums || (exports.SocketEnums = {}));
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const civ_changer_client_1 = require("./aoe2/civ-changer-client");
 const aoe2_config_1 = require("./aoe2/aoe2-config");
 const aoe2_api_1 = require("./aoe2/aoe2-api");
 const tech_tree_civ_changer_1 = require("./aoe2/tech-tree-civ-changer");
+const upgrade_changer_1 = require("./aoe2/upgrade-changer");
 let civChanger;
+let upgradeChanger;
 const aoe2Api = new aoe2_api_1.AoE2Api();
 const aoe2Config = new aoe2_config_1.AoE2Config();
-aoe2Api.getAoE2Data().then((data) => {
+Promise.all([aoe2Api.getAoE2Data(), aoe2Api.getAoE2UpgradeData()]).then((results) => {
     aoe2Config.setConfigFromQueryString();
-    civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(data, aoe2Config);
+    civChanger = new tech_tree_civ_changer_1.TechTreeCivChanger(results[0], aoe2Config);
+    upgradeChanger = new upgrade_changer_1.UpgradeChanger(results[1], aoe2Config);
     civChanger.listenForUrlChanges();
     if (aoe2Config.socketMode) {
-        new civ_changer_client_1.CivChangerClient(civChanger, aoe2Config.clientId);
+        new civ_changer_client_1.CivChangerClient(civChanger, upgradeChanger, aoe2Config.clientId);
     }
 });
 
-},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4}]},{},[6]);
+},{"./aoe2/aoe2-api":1,"./aoe2/aoe2-config":2,"./aoe2/civ-changer-client":3,"./aoe2/tech-tree-civ-changer":4,"./aoe2/upgrade-changer":5}]},{},[7]);

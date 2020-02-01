@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../enums");
 class CivChangerClient {
-    constructor(techTreeCivChanger, socketKey) {
+    constructor(techTreeCivChanger, upgradeChanger, socketKey) {
         this.clientId = '';
         this.clientId = socketKey;
         this.techTreeCivChanger = techTreeCivChanger;
+        this.upgradeChanger = upgradeChanger;
         this.socket = new WebSocket('wss://itsatreee.com:8443');
         this.socket.onopen = this.onOpen.bind(this);
         this.socket.onmessage = this.onMessage.bind(this);

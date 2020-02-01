@@ -1,0 +1,10 @@
+{
+    "upgradesToDisable": {
+        "Aztecs": [
+            "Ring Archer Armor",
+            "Scale Barding Armor",
+            "Chain Barding Armor",
+            "Plate Barding Armor"
+        ]
+    }
+}
