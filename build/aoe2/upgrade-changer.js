@@ -5,15 +5,11 @@ class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
-        this.addToBody(this.createBlackSmithUpgradesPanel("Aztecs"));
+        this.fadeIn("Aztecs");
     }
     fadeIn(civName) {
         const htmlElement = this.createHtmlElement(civName);
-        const civKey = this.data.civs[civName];
-        const civDesc = this.data.key_value[civKey];
-        htmlElement.find('.civ-name').text(civName);
-        htmlElement.find('.civ-desc').html(civDesc);
-        htmlElement.removeClass('fade-out');
+        const upgradesToDisable = this.data.upgradesToDisable[civName];
         htmlElement.addClass('fade-in');
         if (!this.aoe2Config.socketMode) {
             if (this.aoe2Config.visibleDuration) {
@@ -25,7 +21,7 @@ class UpgradeChanger {
         this.addToBody(htmlElement);
     }
     fadeOut(civName) {
-        const htmlElement = $(`#${civName}-tech`);
+        const htmlElement = $(`.div-upgrade-background-wrapper`);
         htmlElement.removeClass('fade-in');
         htmlElement.addClass('fade-out');
         setTimeout(() => {
@@ -33,6 +29,8 @@ class UpgradeChanger {
         }, this.aoe2Config.fadeOutDuration * 1000);
     }
     addToBody(htmlElement) {
+        // const upgradeBackgroundImages = $('<div></div>').addClass(['div-upgrade-background-wrapper']);
+        // upgradeBackgroundImages.append(htmlElement);
         $('#upgrade-overlay-wrapper').append(htmlElement);
     }
     clearTemplate() {
@@ -40,51 +38,44 @@ class UpgradeChanger {
         $('#civ-desc').html('');
     }
     createHtmlElement(civName) {
-        const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img']);
-        // const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
-        // wrapperDiv.css({
-        //     'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
-        //     'background-size': 'contain'
-        // });
-        // const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
-        // wrapperDiv.append(audio);
-        // (wrapperDiv.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
-        // const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
-        // const civIcon = $(`<div></div>`).addClass('civ-icon');
-        // civIcon.css({
-        //     'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civName.toLowerCase()}.png")`,
-        //     'background-size': 'contain',
-        //     'background-repeat': 'no-repeat'
-        // });
-        // const civNameText = $('<div></div>').addClass('civ-name');
-        // civIconAndName.append(civIcon.clone()).append(civNameText).append(civIcon.clone());
-        // wrapperDiv.append(civIconAndName);
-        // wrapperDiv.append($('<div></div>').addClass('civ-desc'));
-        // template.append(wrapperDiv);
+        const template = $(`<div id="${civName}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-vertical']);
+        template.append(this.createBlackSmithUpgradesPanel(civName));
         return template;
     }
     createBlackSmithUpgradesPanel(civName) {
         const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
-        let counter = 0;
-        const numIconsPerLine = 5;
-        let ageUp = 0;
-        const ages = ['feudal', 'castle', 'imperial'];
-        let ageUpDiv = $('<div id="feudal"></div>').addClass('age-upgrades');
-        template.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
-        Object.values(upgrade_enums_1.BlacksmithUpgrades).forEach((upgrade) => {
-            const blacksmithId = `${civName}-upgrade-blacksmith`;
-            ageUpDiv.append(this.createUpgradeIcon(blacksmithId, upgrade.toLowerCase()));
-            if (++counter % numIconsPerLine === 0) {
-                ageUp++;
-                template.append(ageUpDiv);
-                template.append($('<br>'));
-                if (ageUp < ages.length) {
-                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`).addClass('age-upgrades');
-                    ageUpDiv.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
-                }
-            }
-        });
+        template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()));
+        template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
         return template;
+    }
+    getBlacksmithUpgradesByAge(civ, age) {
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-bs-upgrades"></div>`).addClass('age-upgrades');
+        if (age === upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Forging}`, upgrade_enums_1.BlacksmithUpgrades.Forging.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Fletching}`, upgrade_enums_1.BlacksmithUpgrades.Fletching.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Iron_Casting}`, upgrade_enums_1.BlacksmithUpgrades.Iron_Casting.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Chain_Barding_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Chain_Barding_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Bodkin_Arrow}`, upgrade_enums_1.BlacksmithUpgrades.Bodkin_Arrow.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Leather_Archer_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Leather_Archer_Armor.toLowerCase()));
+        }
+        else if (age === upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Blast_Furnace}`, upgrade_enums_1.BlacksmithUpgrades.Blast_Furnace.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Plate_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Plate_Mail_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Plate_Barding_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Plate_Barding_Armor.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Bracer}`, upgrade_enums_1.BlacksmithUpgrades.Bracer.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Ring_Archer_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Ring_Archer_Armor.toLowerCase()));
+        }
+        return groupOfIcons;
     }
     createUpgradeIcon(divId, upgrade) {
         const template = $(`<div id="${divId}"></div>`).addClass(['div-upgrade']);

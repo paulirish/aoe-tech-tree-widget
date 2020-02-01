@@ -1,5 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var AgeUpgrades;
+(function (AgeUpgrades) {
+    AgeUpgrades["Feudal"] = "Feudal";
+    AgeUpgrades["Castle"] = "Castle";
+    AgeUpgrades["Imp"] = "Imperial";
+})(AgeUpgrades = exports.AgeUpgrades || (exports.AgeUpgrades = {}));
 var BlacksmithUpgrades;
 (function (BlacksmithUpgrades) {
     //feudal

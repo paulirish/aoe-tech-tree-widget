@@ -7,10 +7,6 @@ font-family: 'Spectral SC', serif;
     display: flex;
 }
 
-.upgrade-overlay-wrapper {
-    display: flex;
-}
-
 .div-background {
     display: inline-block;
     width: 500px;
@@ -20,19 +16,28 @@ font-family: 'Spectral SC', serif;
     background-repeat: no-repeat;
 }
 
-.div-upgrade-background {
+.div-upgrade-background-wrapper {
     display: inline-block;
-    width: 37rem;
-    height: 7rem;    
+    width: 45rem;
+    height: 10rem;
     background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/chatbar_bg.png");
     background-size: contain;
     background-repeat: no-repeat;
+    text-align: center;
+}
+
+.div-upgrade-background {
+    display: inline-flex;
+    padding-top: 1.5rem;
 }
 
 .div-upgrade {
     display: inline-block;
-    width: 2rem;
-    height: 2rem;   
+    width: 3rem;
+    height: 3rem;
+    border: beige 1px solid;
+    box-shadow: 7px 5px 11px black;
+    border-radius: .5rem;
 }
 
 .div-wrapper {
@@ -71,7 +76,7 @@ font-family: 'Spectral SC', serif;
     font-weight: 600;
 }
 
-.mask-img {
+.mask-img-vertical {
     -webkit-mask-image: linear-gradient(to top, 
         transparent 33.3%, 
         hsl(0, 0%, 100%, 0) 33.4%, 
@@ -163,5 +168,6 @@ font-family: 'Spectral SC', serif;
 }
 
 .age-upgrades {
-    display: flex;
+    display: inline-block;
+    width: 14rem;
 }

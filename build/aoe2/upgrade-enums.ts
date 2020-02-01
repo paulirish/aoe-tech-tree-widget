@@ -1,3 +1,9 @@
+export enum AgeUpgrades {
+    Feudal = "Feudal",
+    Castle = "Castle",
+    Imp = "Imperial"
+}
+
 export enum BlacksmithUpgrades {
     //feudal
     Forging = "Forging",
