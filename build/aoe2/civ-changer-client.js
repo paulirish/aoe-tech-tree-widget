@@ -17,9 +17,11 @@ class CivChangerClient {
         console.log(`DataType: ${message.type} / RawData: ${message.data}`);
         if (message.type === enums_1.SocketEnums.AdminShowCiv) {
             this.techTreeCivChanger.fadeIn(message.data);
+            this.upgradeChanger.fadeInAll(message.data);
         }
         else if (message.type === enums_1.SocketEnums.AdminHideCiv) {
             this.techTreeCivChanger.fadeOut(message.data);
+            this.upgradeChanger.fadeOutAll(message.data);
         }
     }
     showCiv() {
