@@ -3,23 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BlacksmithUpgrades;
 (function (BlacksmithUpgrades) {
     //feudal
-    //castle
-    //imp
-    BlacksmithUpgrades["Padded_Archer_Armor"] = "Padded Archer Armor";
-    BlacksmithUpgrades["Leather_Archer_Armor"] = "Leather Archer Armor";
-    BlacksmithUpgrades["Ring_Archer_Armor"] = "Ring Archer Armor";
-    BlacksmithUpgrades["Fletching"] = "Fletching";
-    BlacksmithUpgrades["Bodkin_Arrow"] = "Bodkin Arrow";
-    BlacksmithUpgrades["Bracer"] = "Bracer";
     BlacksmithUpgrades["Forging"] = "Forging";
-    BlacksmithUpgrades["Iron_Casting"] = "Iron Casting";
-    BlacksmithUpgrades["Blast_Furnace"] = "Blast Furnace";
+    BlacksmithUpgrades["Scale_Mail_Armor"] = "Scale Mail Armor";
     BlacksmithUpgrades["Scale_Barding_Armor"] = "Scale Barding Armor";
-    BlacksmithUpgrades["Chain_Barding_Armor"] = "Chain Barding Armor";
-    BlacksmithUpgrades["Plate_Barding_Armor"] = "Plate Barding Armor";
-    BlacksmithUpgrades["Scale_Mail_Armor"] = "Plate Barding Armor";
+    BlacksmithUpgrades["Fletching"] = "Fletching";
+    BlacksmithUpgrades["Padded_Archer_Armor"] = "Padded Archer Armor";
+    //castle
+    BlacksmithUpgrades["Iron_Casting"] = "Iron Casting";
     BlacksmithUpgrades["Chain_Mail_Armor"] = "Chain Mail Armor";
+    BlacksmithUpgrades["Chain_Barding_Armor"] = "Chain Barding Armor";
+    BlacksmithUpgrades["Bodkin_Arrow"] = "Bodkin Arrow";
+    BlacksmithUpgrades["Leather_Archer_Armor"] = "Leather Archer Armor";
+    //imp
+    BlacksmithUpgrades["Blast_Furnace"] = "Blast Furnace";
     BlacksmithUpgrades["Plate_Mail_Armor"] = "Plate Mail Armor";
+    BlacksmithUpgrades["Plate_Barding_Armor"] = "Plate Barding Armor";
+    BlacksmithUpgrades["Bracer"] = "Bracer";
+    BlacksmithUpgrades["Ring_Archer_Armor"] = "Ring Archer Armor";
 })(BlacksmithUpgrades = exports.BlacksmithUpgrades || (exports.BlacksmithUpgrades = {}));
 var MonestaryUpgrades;
 (function (MonestaryUpgrades) {

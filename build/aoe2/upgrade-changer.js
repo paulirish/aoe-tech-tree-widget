@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const upgrade_enums_1 = require("./upgrade-enums");
 class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
-        this.createBlackSmithUpgradesElement("Aztecs");
+        this.addToBody(this.createBlackSmithUpgradesPanel("Aztecs"));
     }
     fadeIn(civName) {
         const htmlElement = this.createHtmlElement(civName);
@@ -62,8 +63,36 @@ class UpgradeChanger {
         // template.append(wrapperDiv);
         return template;
     }
-    createBlackSmithUpgradesElement(civName) {
-        const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-background', 'mask-img']);
+    createBlackSmithUpgradesPanel(civName) {
+        const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
+        let counter = 0;
+        const numIconsPerLine = 5;
+        let ageUp = 0;
+        const ages = ['feudal', 'castle', 'imperial'];
+        let ageUpDiv = $('<div id="feudal"></div>');
+        template.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
+        Object.values(upgrade_enums_1.BlacksmithUpgrades).forEach((upgrade) => {
+            const blacksmithId = `${civName}-upgrade-blacksmith`;
+            ageUpDiv.append(this.createUpgradeIcon(blacksmithId, upgrade.toLowerCase()));
+            if (++counter % numIconsPerLine === 0) {
+                ageUp++;
+                template.append(ageUpDiv);
+                template.append($('<br>'));
+                if (ageUp < ages.length) {
+                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`);
+                    ageUpDiv.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
+                }
+            }
+        });
+        return template;
+    }
+    createUpgradeIcon(divId, upgrade) {
+        const template = $(`<div id="${divId}"></div>`).addClass(['div-upgrade']);
+        template.css({
+            "background": `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/upgrade-icons/${upgrade}.png")`,
+            "background-size": "contain",
+            "background-repeat": "no-repeat",
+        });
         return template;
     }
 }

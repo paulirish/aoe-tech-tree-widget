@@ -7,6 +7,10 @@ font-family: 'Spectral SC', serif;
     display: flex;
 }
 
+.upgrade-overlay-wrapper {
+    display: flex;
+}
+
 .div-background {
     display: inline-block;
     width: 500px;
@@ -14,6 +18,21 @@ font-family: 'Spectral SC', serif;
     background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/popup_menu_bg_portrait.png");
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.div-upgrade-background {
+    display: inline-block;
+    width: 37rem;
+    height: 7rem;    
+    background: url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/chatbar_bg.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.div-upgrade {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;   
 }
 
 .div-wrapper {

@@ -1,22 +1,22 @@
 export enum BlacksmithUpgrades {
     //feudal
-    Padded_Archer_Armor = "Padded Archer Armor",
-    Fletching = "Fletching",
     Forging = "Forging",
+    Scale_Mail_Armor = "Scale Mail Armor",
     Scale_Barding_Armor = "Scale Barding Armor",
-    Scale_Mail_Armor = "Plate Barding Armor",
+    Fletching = "Fletching",
+    Padded_Archer_Armor = "Padded Archer Armor",
     //castle
-    Leather_Archer_Armor = "Leather Archer Armor",
-    Bodkin_Arrow = "Bodkin Arrow",
     Iron_Casting = "Iron Casting",
-    Chain_Barding_Armor = "Chain Barding Armor",
     Chain_Mail_Armor = "Chain Mail Armor",
+    Chain_Barding_Armor = "Chain Barding Armor",
+    Bodkin_Arrow = "Bodkin Arrow",
+    Leather_Archer_Armor = "Leather Archer Armor",
     //imp
-    Ring_Archer_Armor = "Ring Archer Armor",
-    Bracer = "Bracer",
     Blast_Furnace = "Blast Furnace",
+    Plate_Mail_Armor = "Plate Mail Armor",
     Plate_Barding_Armor = "Plate Barding Armor",
-    Plate_Mail_Armor = "Plate Mail Armor"
+    Bracer = "Bracer",
+    Ring_Archer_Armor = "Ring Archer Armor",
 }
 
 export enum MonestaryUpgrades {

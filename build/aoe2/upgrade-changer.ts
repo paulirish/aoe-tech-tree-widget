@@ -1,4 +1,5 @@
 import { AoE2Config } from "./aoe2-config";
+import { BlacksmithUpgrades } from "./upgrade-enums";
 
 export class UpgradeChanger {
     data: any;
@@ -7,7 +8,7 @@ export class UpgradeChanger {
     constructor(upgradeData: any, aoe2Config: AoE2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
-        this.createBlackSmithUpgradesElement("Aztecs");
+        this.addToBody(this.createBlackSmithUpgradesPanel("Aztecs"));
     }
 
     public fadeIn(civName: string) {
@@ -76,8 +77,44 @@ export class UpgradeChanger {
         return template;
     }
 
-    createBlackSmithUpgradesElement(civName: string): JQuery<HTMLElement> {
-        const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-background', 'mask-img']);
+    public createBlackSmithUpgradesPanel(civName: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
+        let counter = 0;
+        const numIconsPerLine = 5;
+        let ageUp = 0;
+        const ages = ['feudal', 'castle', 'imperial'];
+
+        let ageUpDiv = $('<div id="feudal"></div>');
+
+
+        template.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
+
+
+        Object.values(BlacksmithUpgrades).forEach((upgrade: string) => {
+            const blacksmithId = `${civName}-upgrade-blacksmith`;
+            ageUpDiv.append(this.createUpgradeIcon(blacksmithId, upgrade.toLowerCase()));
+            if (++counter % numIconsPerLine === 0) {
+                ageUp++;
+                template.append(ageUpDiv);
+                template.append($('<br>'));
+                if (ageUp < ages.length) {
+                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`);
+                    ageUpDiv.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
+                }
+
+            }
+        });
+        return template;
+    }
+
+    private createUpgradeIcon(divId: string, upgrade: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${divId}"></div>`).addClass(['div-upgrade']);
+        template.css({
+            "background": `url("https://raw.githubusercontent.com/Treee/aoe-tech-tree-widget/gh-pages/build/images/upgrade-icons/${upgrade}.png")`,
+            "background-size": "contain",
+            "background-repeat": "no-repeat",
+
+        });
         return template;
     }
 }
