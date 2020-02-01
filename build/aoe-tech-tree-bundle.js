@@ -294,7 +294,7 @@ class UpgradeChanger {
         const numIconsPerLine = 5;
         let ageUp = 0;
         const ages = ['feudal', 'castle', 'imperial'];
-        let ageUpDiv = $('<div id="feudal"></div>');
+        let ageUpDiv = $('<div id="feudal"></div>').addClass('age-upgrades');
         template.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
         Object.values(upgrade_enums_1.BlacksmithUpgrades).forEach((upgrade) => {
             const blacksmithId = `${civName}-upgrade-blacksmith`;
@@ -304,7 +304,7 @@ class UpgradeChanger {
                 template.append(ageUpDiv);
                 template.append($('<br>'));
                 if (ageUp < ages.length) {
-                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`);
+                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`).addClass('age-upgrades');
                     ageUpDiv.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
                 }
             }

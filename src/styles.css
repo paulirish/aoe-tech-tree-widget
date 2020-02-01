@@ -161,3 +161,7 @@ font-family: 'Spectral SC', serif;
 .not-faded {
     opacity: 1;
 }
+
+.age-upgrades {
+    display: flex;
+}

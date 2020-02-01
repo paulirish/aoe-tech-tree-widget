@@ -84,7 +84,7 @@ export class UpgradeChanger {
         let ageUp = 0;
         const ages = ['feudal', 'castle', 'imperial'];
 
-        let ageUpDiv = $('<div id="feudal"></div>');
+        let ageUpDiv = $('<div id="feudal"></div>').addClass('age-upgrades');
 
 
         template.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
@@ -98,7 +98,7 @@ export class UpgradeChanger {
                 template.append(ageUpDiv);
                 template.append($('<br>'));
                 if (ageUp < ages.length) {
-                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`);
+                    ageUpDiv = $(`<div id=${ages[ageUp]}></div>`).addClass('age-upgrades');
                     ageUpDiv.append(this.createUpgradeIcon(`${civName}-${ages[ageUp]}`, ages[ageUp]));
                 }
 
