@@ -14,7 +14,6 @@ export class AdminClient {
         this.socket.onerror = this.onError;
         this.setConfigFromQueryString();
         this.buildHtml();
-        this.setClientId();
     }
 
     public setConfigFromQueryString() {
@@ -42,10 +41,6 @@ export class AdminClient {
             }
         });
         return object;
-    }
-
-    setClientId() {
-        $('#txt-client-id').val(this.config.clientId);
     }
 
     buildHtml() {
@@ -85,10 +80,9 @@ export class AdminClient {
     }
 
     formatDataForWebsocket(dataType: SocketEnums, rawData: any): string {
-        const clientId = $('#txt-client-id').val();
         console.log('Formatting Data for websocket');
-        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${clientId}`);
-        return JSON.stringify({ type: dataType, data: rawData, toClientId: clientId });
+        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${this.config.clientId}`);
+        return JSON.stringify({ type: dataType, data: rawData, toClientId: this.config.clientId });
     }
 
     lastClickedCivs: string[] = [];
