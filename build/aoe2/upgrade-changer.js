@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const upgrade_enums_1 = require("./upgrade-enums");
+const enums_1 = require("../enums");
 class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
@@ -35,17 +36,48 @@ class UpgradeChanger {
             this.fadeOut(civName, 'blacksmith');
         }, 650);
     }
-    fadeIn(civName, building) {
-        const htmlElement = this.createHtmlElement(civName, building);
-        htmlElement.addClass('fade-in-left-to-right');
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName, building);
-                }, this.aoe2Config.visibleDuration * 1000);
+    handleMessage(type, rawData) {
+        if (type === enums_1.SocketEnums.AdminHide) {
+            const data = rawData;
+            if (data.overlays.all) {
+                this.fadeOutAll(data.civ);
+            }
+            else {
+                Object.keys(data.overlays).forEach((key) => {
+                    if (data.overlays[key] && key !== enums_1.OverlayEnums.Tech && key !== enums_1.OverlayEnums.All) {
+                        this.fadeOut(data.civ, key);
+                    }
+                });
             }
         }
-        this.addToBody(htmlElement);
+        else if (type === enums_1.SocketEnums.AdminShow) {
+            const data = rawData;
+            if (data.overlays.all) {
+                this.fadeInAll(data.civ);
+            }
+            else {
+                Object.keys(data.overlays).forEach((key) => {
+                    if (data.overlays[key] && key !== enums_1.OverlayEnums.Tech && key !== enums_1.OverlayEnums.All) {
+                        this.fadeIn(data.civ, key);
+                    }
+                });
+            }
+        }
+    }
+    fadeIn(civName, building) {
+        // if the element doesnt alreayd exist
+        if (!$(`#${civName.toLowerCase()}-upgrades-${building}`).length) {
+            const htmlElement = this.createHtmlElement(civName, building);
+            htmlElement.addClass('fade-in-left-to-right');
+            if (!this.aoe2Config.socketMode) {
+                if (this.aoe2Config.visibleDuration) {
+                    setTimeout(() => {
+                        this.fadeOut(civName, building);
+                    }, this.aoe2Config.visibleDuration * 1000);
+                }
+            }
+            this.addToBody(htmlElement);
+        }
     }
     fadeOut(civName, building) {
         const id = `${civName.toLowerCase()}-upgrades-${building}`;
@@ -87,7 +119,6 @@ class UpgradeChanger {
     }
     createBlackSmithUpgradesPanel(civName) {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
-        template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
         return template;

@@ -1,4 +1,4 @@
-import { SocketEnums } from "../enums";
+import { SocketEnums, OverlayEnums } from "../enums";
 
 export class AdminClient {
 
@@ -43,8 +43,14 @@ export class AdminClient {
         return object;
     }
 
-    buildHtml() {
+    private buildHtml() {
         this.createClickableCivIcons();
+        this.attachTogglesToListeners();
+        this.setToggleValue(OverlayEnums.Tech, true);
+    }
+
+    private sendSocketCommand(socketEnum: SocketEnums, data: any) {
+        this.socket.send(this.formatDataForWebsocket(socketEnum, data));
     }
 
     showCiv(civName: string) {
@@ -81,8 +87,35 @@ export class AdminClient {
 
     formatDataForWebsocket(dataType: SocketEnums, rawData: any): string {
         console.log('Formatting Data for websocket');
-        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${this.config.clientId}`);
+        console.log(`DataType: ${dataType} / RawData: ${JSON.stringify(rawData)} / ClientId: ${this.config.clientId}`);
         return JSON.stringify({ type: dataType, data: rawData, toClientId: this.config.clientId });
+    }
+
+    private isToggleChecked(toggleId: string): boolean {
+        return $(`#toggle-${toggleId}-overlay`).is(':checked');
+    }
+
+    private setToggleValue(toggleId: string, value: boolean): void {
+        $(`#toggle-${toggleId}-overlay`).prop('checked', value);
+    }
+
+    private isAnyToggleActive(): boolean {
+        return this.isToggleChecked(OverlayEnums.All) || this.isToggleChecked(OverlayEnums.Tech)
+            || this.isToggleChecked(OverlayEnums.Blacksmith) || this.isToggleChecked(OverlayEnums.University)
+            || this.isToggleChecked(OverlayEnums.Monastary);
+    }
+
+    private getOverlayData(civ: string): any {
+        return {
+            civ: civ,
+            overlays: {
+                all: this.isToggleChecked(OverlayEnums.All),
+                tech: this.isToggleChecked(OverlayEnums.Tech),
+                blacksmith: this.isToggleChecked(OverlayEnums.Blacksmith),
+                university: this.isToggleChecked(OverlayEnums.University),
+                monastary: this.isToggleChecked(OverlayEnums.Monastary),
+            }
+        };
     }
 
     lastClickedCivs: string[] = [];
@@ -117,23 +150,80 @@ export class AdminClient {
 
                 civIcon.click(() => {
 
-                    if (this.lastClickedCivs.includes(civ)) { // if we have clicked this civ before
-                        this.hideCiv(civ);
-                        this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => { // remove hidden civs
-                            civIcon.addClass('faded');
-                            civIcon.removeClass('not-faded');
-                            return civ !== clickedCiv;
-                        });
-                    } else {
-                        this.showCiv(civ);
-                        civIcon.removeClass('faded');
-                        civIcon.addClass('not-faded');
-                        this.lastClickedCivs.push(civ);
+                    if (this.isAnyToggleActive()) {
+                        // if we have clicked this civ before     
+                        if (this.lastClickedCivs.includes(civ)) {
+                            this.sendSocketCommand(SocketEnums.AdminHide, this.getOverlayData(civ));
+                            // this.hideCiv(civ);
+                            this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => { // remove hidden civs
+                                civIcon.addClass('faded');
+                                civIcon.removeClass('not-faded');
+                                return civ !== clickedCiv;
+                            });
+                        } else { // show the civ
+                            this.sendSocketCommand(SocketEnums.AdminShow, this.getOverlayData(civ));
+
+                            civIcon.removeClass('faded');
+                            civIcon.addClass('not-faded');
+                            this.lastClickedCivs.push(civ);
+                        }
                     }
                 });
                 divWrapper.append(civIcon);
             });
         $('body').append(divWrapper);
+    }
+
+    attachTogglesToListeners() {
+        $('#toggle-all-overlay').click(() => {
+            if (this.isToggleChecked(OverlayEnums.All)) {
+                this.setToggleValue(OverlayEnums.Tech, true);
+                this.setToggleValue(OverlayEnums.Blacksmith, true);
+                this.setToggleValue(OverlayEnums.University, true);
+                this.setToggleValue(OverlayEnums.Monastary, true);
+            } else {
+                this.setToggleValue(OverlayEnums.Tech, false);
+                this.setToggleValue(OverlayEnums.Blacksmith, false);
+                this.setToggleValue(OverlayEnums.University, false);
+                this.setToggleValue(OverlayEnums.Monastary, false);
+            }
+
+            if (this.lastClickedCivs.length > 0) {
+                if (this.isToggleChecked(OverlayEnums.All)) {
+                    this.sendSocketCommand(SocketEnums.AdminShowAll, { civ: this.lastClickedCivs[0], overlay: OverlayEnums.All });
+                } else {
+                    this.sendSocketCommand(SocketEnums.AdminHideAll, { civ: this.lastClickedCivs[0], overlay: OverlayEnums.All });
+                }
+            }
+        });
+        $('#toggle-tech-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-blacksmith-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-university-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-monastary-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
     }
 
 }

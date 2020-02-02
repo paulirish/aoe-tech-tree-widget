@@ -1,4 +1,5 @@
 import { AoE2Config } from "./aoe2-config";
+import { SocketEnums } from "../enums";
 
 export class TechTreeCivChanger {
     data: any;
@@ -35,27 +36,41 @@ export class TechTreeCivChanger {
         });
     }
 
-    public fadeIn(civName: string) {
-        const htmlElement = this.createHtmlElement(civName);
-        const civKey = this.data.civs[civName];
-        const civDesc = this.data.key_value[civKey];
-        htmlElement.find('.civ-name').text(civName);
-        htmlElement.find('.civ-desc').html(civDesc);
-
-        htmlElement.removeClass('fade-out');
-        htmlElement.addClass('fade-in');
-
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName);
-                }, this.aoe2Config.visibleDuration * 1000);
+    public handleMessage(socketEnum: SocketEnums, data: any) {
+        if (socketEnum === SocketEnums.AdminShow) {
+            if (data.overlays.tech) {
+                this.fadeIn(data.civ);
+            }
+        } else if (socketEnum === SocketEnums.AdminHide) {
+            if (data.overlays.tech) {
+                this.fadeOut(data.civ);
             }
         }
-        this.addToBody(htmlElement);
     }
 
-    public fadeOut(civName: string) {
+    private fadeIn(civName: string) {
+        if (!$(`#${civName}-tech`).length) {
+            const htmlElement = this.createHtmlElement(civName);
+            const civKey = this.data.civs[civName];
+            const civDesc = this.data.key_value[civKey];
+            htmlElement.find('.civ-name').text(civName);
+            htmlElement.find('.civ-desc').html(civDesc);
+
+            htmlElement.removeClass('fade-out');
+            htmlElement.addClass('fade-in');
+
+            if (!this.aoe2Config.socketMode) {
+                if (this.aoe2Config.visibleDuration) {
+                    setTimeout(() => {
+                        this.fadeOut(civName);
+                    }, this.aoe2Config.visibleDuration * 1000);
+                }
+            }
+            this.addToBody(htmlElement);
+        }
+    }
+
+    private fadeOut(civName: string) {
         const htmlElement = $(`#${civName}-tech`);
         htmlElement.removeClass('fade-in');
         htmlElement.addClass('fade-out');

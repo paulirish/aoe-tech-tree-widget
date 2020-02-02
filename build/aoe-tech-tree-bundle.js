@@ -91,18 +91,9 @@ class CivChangerClient {
         this.socket.onerror = this.onError;
     }
     handleMessage(message) {
-        console.log(`DataType: ${message.type} / RawData: ${message.data}`);
-        if (message.type === enums_1.SocketEnums.AdminShowCiv) {
-            this.techTreeCivChanger.fadeIn(message.data);
-            this.upgradeChanger.fadeInAll(message.data);
-        }
-        else if (message.type === enums_1.SocketEnums.AdminHideCiv) {
-            this.techTreeCivChanger.fadeOut(message.data);
-            this.upgradeChanger.fadeOutAll(message.data);
-        }
-    }
-    showCiv() {
-        this.techTreeCivChanger.fadeIn("Aztecs");
+        console.log(`DataType: ${message.type} / RawData: ${JSON.stringify(message.data)}`);
+        this.upgradeChanger.handleMessage(message.type, message.data);
+        this.techTreeCivChanger.handleMessage(message.type, message.data);
     }
     onOpen(event) {
         console.log('[open] Connection established');
@@ -137,6 +128,7 @@ exports.CivChangerClient = CivChangerClient;
 },{"../enums":8}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const enums_1 = require("../enums");
 class TechTreeCivChanger {
     constructor(techData, aoe2Config) {
         this.data = techData;
@@ -166,22 +158,36 @@ class TechTreeCivChanger {
             }
         });
     }
-    fadeIn(civName) {
-        const htmlElement = this.createHtmlElement(civName);
-        const civKey = this.data.civs[civName];
-        const civDesc = this.data.key_value[civKey];
-        htmlElement.find('.civ-name').text(civName);
-        htmlElement.find('.civ-desc').html(civDesc);
-        htmlElement.removeClass('fade-out');
-        htmlElement.addClass('fade-in');
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName);
-                }, this.aoe2Config.visibleDuration * 1000);
+    handleMessage(socketEnum, data) {
+        if (socketEnum === enums_1.SocketEnums.AdminShow) {
+            if (data.overlays.tech) {
+                this.fadeIn(data.civ);
             }
         }
-        this.addToBody(htmlElement);
+        else if (socketEnum === enums_1.SocketEnums.AdminHide) {
+            if (data.overlays.tech) {
+                this.fadeOut(data.civ);
+            }
+        }
+    }
+    fadeIn(civName) {
+        if (!$(`#${civName}-tech`).length) {
+            const htmlElement = this.createHtmlElement(civName);
+            const civKey = this.data.civs[civName];
+            const civDesc = this.data.key_value[civKey];
+            htmlElement.find('.civ-name').text(civName);
+            htmlElement.find('.civ-desc').html(civDesc);
+            htmlElement.removeClass('fade-out');
+            htmlElement.addClass('fade-in');
+            if (!this.aoe2Config.socketMode) {
+                if (this.aoe2Config.visibleDuration) {
+                    setTimeout(() => {
+                        this.fadeOut(civName);
+                    }, this.aoe2Config.visibleDuration * 1000);
+                }
+            }
+            this.addToBody(htmlElement);
+        }
     }
     fadeOut(civName) {
         const htmlElement = $(`#${civName}-tech`);
@@ -225,10 +231,11 @@ class TechTreeCivChanger {
 }
 exports.TechTreeCivChanger = TechTreeCivChanger;
 
-},{}],5:[function(require,module,exports){
+},{"../enums":8}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const upgrade_enums_1 = require("./upgrade-enums");
+const enums_1 = require("../enums");
 class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
@@ -263,17 +270,48 @@ class UpgradeChanger {
             this.fadeOut(civName, 'blacksmith');
         }, 650);
     }
-    fadeIn(civName, building) {
-        const htmlElement = this.createHtmlElement(civName, building);
-        htmlElement.addClass('fade-in-left-to-right');
-        if (!this.aoe2Config.socketMode) {
-            if (this.aoe2Config.visibleDuration) {
-                setTimeout(() => {
-                    this.fadeOut(civName, building);
-                }, this.aoe2Config.visibleDuration * 1000);
+    handleMessage(type, rawData) {
+        if (type === enums_1.SocketEnums.AdminHide) {
+            const data = rawData;
+            if (data.overlays.all) {
+                this.fadeOutAll(data.civ);
+            }
+            else {
+                Object.keys(data.overlays).forEach((key) => {
+                    if (data.overlays[key] && key !== enums_1.OverlayEnums.Tech && key !== enums_1.OverlayEnums.All) {
+                        this.fadeOut(data.civ, key);
+                    }
+                });
             }
         }
-        this.addToBody(htmlElement);
+        else if (type === enums_1.SocketEnums.AdminShow) {
+            const data = rawData;
+            if (data.overlays.all) {
+                this.fadeInAll(data.civ);
+            }
+            else {
+                Object.keys(data.overlays).forEach((key) => {
+                    if (data.overlays[key] && key !== enums_1.OverlayEnums.Tech && key !== enums_1.OverlayEnums.All) {
+                        this.fadeIn(data.civ, key);
+                    }
+                });
+            }
+        }
+    }
+    fadeIn(civName, building) {
+        // if the element doesnt alreayd exist
+        if (!$(`#${civName.toLowerCase()}-upgrades-${building}`).length) {
+            const htmlElement = this.createHtmlElement(civName, building);
+            htmlElement.addClass('fade-in-left-to-right');
+            if (!this.aoe2Config.socketMode) {
+                if (this.aoe2Config.visibleDuration) {
+                    setTimeout(() => {
+                        this.fadeOut(civName, building);
+                    }, this.aoe2Config.visibleDuration * 1000);
+                }
+            }
+            this.addToBody(htmlElement);
+        }
     }
     fadeOut(civName, building) {
         const id = `${civName.toLowerCase()}-upgrades-${building}`;
@@ -315,7 +353,6 @@ class UpgradeChanger {
     }
     createBlackSmithUpgradesPanel(civName) {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
-        template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()));
         return template;
@@ -469,7 +506,7 @@ class UpgradeChanger {
 }
 exports.UpgradeChanger = UpgradeChanger;
 
-},{"./upgrade-enums":6}],6:[function(require,module,exports){
+},{"../enums":8,"./upgrade-enums":6}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var AgeUpgrades;
@@ -2031,9 +2068,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SocketEnums;
 (function (SocketEnums) {
     SocketEnums[SocketEnums["ClientRegister"] = 0] = "ClientRegister";
-    SocketEnums[SocketEnums["AdminShowCiv"] = 1] = "AdminShowCiv";
-    SocketEnums[SocketEnums["AdminHideCiv"] = 2] = "AdminHideCiv";
+    SocketEnums[SocketEnums["AdminHide"] = 1] = "AdminHide";
+    SocketEnums[SocketEnums["AdminShow"] = 2] = "AdminShow";
+    SocketEnums[SocketEnums["AdminShowCiv"] = 3] = "AdminShowCiv";
+    SocketEnums[SocketEnums["AdminHideCiv"] = 4] = "AdminHideCiv";
+    SocketEnums[SocketEnums["AdminShowAll"] = 5] = "AdminShowAll";
+    SocketEnums[SocketEnums["AdminHideAll"] = 6] = "AdminHideAll";
+    SocketEnums[SocketEnums["AdminShowTech"] = 7] = "AdminShowTech";
+    SocketEnums[SocketEnums["AdminHideTech"] = 8] = "AdminHideTech";
+    SocketEnums[SocketEnums["AdminShowBlacksmith"] = 9] = "AdminShowBlacksmith";
+    SocketEnums[SocketEnums["AdminHideBlacksmith"] = 10] = "AdminHideBlacksmith";
+    SocketEnums[SocketEnums["AdminShowUniversity"] = 11] = "AdminShowUniversity";
+    SocketEnums[SocketEnums["AdminHideUniversity"] = 12] = "AdminHideUniversity";
+    SocketEnums[SocketEnums["AdminShowMonastary"] = 13] = "AdminShowMonastary";
+    SocketEnums[SocketEnums["AdminHideMonastary"] = 14] = "AdminHideMonastary";
+    SocketEnums[SocketEnums["AdminShowDock"] = 15] = "AdminShowDock";
+    SocketEnums[SocketEnums["AdminHideDock"] = 16] = "AdminHideDock";
 })(SocketEnums = exports.SocketEnums || (exports.SocketEnums = {}));
+var OverlayEnums;
+(function (OverlayEnums) {
+    OverlayEnums["All"] = "all";
+    OverlayEnums["Tech"] = "tech";
+    OverlayEnums["Blacksmith"] = "blacksmith";
+    OverlayEnums["University"] = "university";
+    OverlayEnums["Monastary"] = "monastary";
+})(OverlayEnums = exports.OverlayEnums || (exports.OverlayEnums = {}));
 
 },{}],9:[function(require,module,exports){
 "use strict";

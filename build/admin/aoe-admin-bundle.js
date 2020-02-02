@@ -14,7 +14,6 @@ class AdminClient {
         this.socket.onerror = this.onError;
         this.setConfigFromQueryString();
         this.buildHtml();
-        this.setClientId();
     }
     setConfigFromQueryString() {
         this.config = this.setConfigFrom(window.location.search.substring(1));
@@ -42,11 +41,13 @@ class AdminClient {
         });
         return object;
     }
-    setClientId() {
-        $('#txt-client-id').val(this.config.clientId);
-    }
     buildHtml() {
         this.createClickableCivIcons();
+        this.attachTogglesToListeners();
+        this.setToggleValue(enums_1.OverlayEnums.Tech, true);
+    }
+    sendSocketCommand(socketEnum, data) {
+        this.socket.send(this.formatDataForWebsocket(socketEnum, data));
     }
     showCiv(civName) {
         this.socket.send(this.formatDataForWebsocket(enums_1.SocketEnums.AdminShowCiv, civName));
@@ -76,10 +77,32 @@ class AdminClient {
         console.log(`[error] ${event.message}`);
     }
     formatDataForWebsocket(dataType, rawData) {
-        const clientId = $('#txt-client-id').val();
         console.log('Formatting Data for websocket');
-        console.log(`DataType: ${dataType} / RawData: ${rawData} / ClientId: ${clientId}`);
-        return JSON.stringify({ type: dataType, data: rawData, toClientId: clientId });
+        console.log(`DataType: ${dataType} / RawData: ${JSON.stringify(rawData)} / ClientId: ${this.config.clientId}`);
+        return JSON.stringify({ type: dataType, data: rawData, toClientId: this.config.clientId });
+    }
+    isToggleChecked(toggleId) {
+        return $(`#toggle-${toggleId}-overlay`).is(':checked');
+    }
+    setToggleValue(toggleId, value) {
+        $(`#toggle-${toggleId}-overlay`).prop('checked', value);
+    }
+    isAnyToggleActive() {
+        return this.isToggleChecked(enums_1.OverlayEnums.All) || this.isToggleChecked(enums_1.OverlayEnums.Tech)
+            || this.isToggleChecked(enums_1.OverlayEnums.Blacksmith) || this.isToggleChecked(enums_1.OverlayEnums.University)
+            || this.isToggleChecked(enums_1.OverlayEnums.Monastary);
+    }
+    getOverlayData(civ) {
+        return {
+            civ: civ,
+            overlays: {
+                all: this.isToggleChecked(enums_1.OverlayEnums.All),
+                tech: this.isToggleChecked(enums_1.OverlayEnums.Tech),
+                blacksmith: this.isToggleChecked(enums_1.OverlayEnums.Blacksmith),
+                university: this.isToggleChecked(enums_1.OverlayEnums.University),
+                monastary: this.isToggleChecked(enums_1.OverlayEnums.Monastary),
+            }
+        };
     }
     createClickableCivIcons() {
         const divWrapper = $('<div id="civ-tech-icons"></div>').addClass('civ-tech-icons-wrapper');
@@ -109,24 +132,80 @@ class AdminClient {
                 }
             });
             civIcon.click(() => {
-                if (this.lastClickedCivs.includes(civ)) { // if we have clicked this civ before
-                    this.hideCiv(civ);
-                    this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => {
-                        civIcon.addClass('faded');
-                        civIcon.removeClass('not-faded');
-                        return civ !== clickedCiv;
-                    });
-                }
-                else {
-                    this.showCiv(civ);
-                    civIcon.removeClass('faded');
-                    civIcon.addClass('not-faded');
-                    this.lastClickedCivs.push(civ);
+                if (this.isAnyToggleActive()) {
+                    // if we have clicked this civ before     
+                    if (this.lastClickedCivs.includes(civ)) {
+                        this.sendSocketCommand(enums_1.SocketEnums.AdminHide, this.getOverlayData(civ));
+                        // this.hideCiv(civ);
+                        this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => {
+                            civIcon.addClass('faded');
+                            civIcon.removeClass('not-faded');
+                            return civ !== clickedCiv;
+                        });
+                    }
+                    else { // show the civ
+                        this.sendSocketCommand(enums_1.SocketEnums.AdminShow, this.getOverlayData(civ));
+                        civIcon.removeClass('faded');
+                        civIcon.addClass('not-faded');
+                        this.lastClickedCivs.push(civ);
+                    }
                 }
             });
             divWrapper.append(civIcon);
         });
         $('body').append(divWrapper);
+    }
+    attachTogglesToListeners() {
+        $('#toggle-all-overlay').click(() => {
+            if (this.isToggleChecked(enums_1.OverlayEnums.All)) {
+                this.setToggleValue(enums_1.OverlayEnums.Tech, true);
+                this.setToggleValue(enums_1.OverlayEnums.Blacksmith, true);
+                this.setToggleValue(enums_1.OverlayEnums.University, true);
+                this.setToggleValue(enums_1.OverlayEnums.Monastary, true);
+            }
+            else {
+                this.setToggleValue(enums_1.OverlayEnums.Tech, false);
+                this.setToggleValue(enums_1.OverlayEnums.Blacksmith, false);
+                this.setToggleValue(enums_1.OverlayEnums.University, false);
+                this.setToggleValue(enums_1.OverlayEnums.Monastary, false);
+            }
+            if (this.lastClickedCivs.length > 0) {
+                if (this.isToggleChecked(enums_1.OverlayEnums.All)) {
+                    this.sendSocketCommand(enums_1.SocketEnums.AdminShowAll, { civ: this.lastClickedCivs[0], overlay: enums_1.OverlayEnums.All });
+                }
+                else {
+                    this.sendSocketCommand(enums_1.SocketEnums.AdminHideAll, { civ: this.lastClickedCivs[0], overlay: enums_1.OverlayEnums.All });
+                }
+            }
+        });
+        $('#toggle-tech-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-blacksmith-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-university-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-monastary-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
     }
 }
 exports.AdminClient = AdminClient;
@@ -143,8 +222,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SocketEnums;
 (function (SocketEnums) {
     SocketEnums[SocketEnums["ClientRegister"] = 0] = "ClientRegister";
-    SocketEnums[SocketEnums["AdminShowCiv"] = 1] = "AdminShowCiv";
-    SocketEnums[SocketEnums["AdminHideCiv"] = 2] = "AdminHideCiv";
+    SocketEnums[SocketEnums["AdminHide"] = 1] = "AdminHide";
+    SocketEnums[SocketEnums["AdminShow"] = 2] = "AdminShow";
+    SocketEnums[SocketEnums["AdminShowCiv"] = 3] = "AdminShowCiv";
+    SocketEnums[SocketEnums["AdminHideCiv"] = 4] = "AdminHideCiv";
+    SocketEnums[SocketEnums["AdminShowAll"] = 5] = "AdminShowAll";
+    SocketEnums[SocketEnums["AdminHideAll"] = 6] = "AdminHideAll";
+    SocketEnums[SocketEnums["AdminShowTech"] = 7] = "AdminShowTech";
+    SocketEnums[SocketEnums["AdminHideTech"] = 8] = "AdminHideTech";
+    SocketEnums[SocketEnums["AdminShowBlacksmith"] = 9] = "AdminShowBlacksmith";
+    SocketEnums[SocketEnums["AdminHideBlacksmith"] = 10] = "AdminHideBlacksmith";
+    SocketEnums[SocketEnums["AdminShowUniversity"] = 11] = "AdminShowUniversity";
+    SocketEnums[SocketEnums["AdminHideUniversity"] = 12] = "AdminHideUniversity";
+    SocketEnums[SocketEnums["AdminShowMonastary"] = 13] = "AdminShowMonastary";
+    SocketEnums[SocketEnums["AdminHideMonastary"] = 14] = "AdminHideMonastary";
+    SocketEnums[SocketEnums["AdminShowDock"] = 15] = "AdminShowDock";
+    SocketEnums[SocketEnums["AdminHideDock"] = 16] = "AdminHideDock";
 })(SocketEnums = exports.SocketEnums || (exports.SocketEnums = {}));
+var OverlayEnums;
+(function (OverlayEnums) {
+    OverlayEnums["All"] = "all";
+    OverlayEnums["Tech"] = "tech";
+    OverlayEnums["Blacksmith"] = "blacksmith";
+    OverlayEnums["University"] = "university";
+    OverlayEnums["Monastary"] = "monastary";
+})(OverlayEnums = exports.OverlayEnums || (exports.OverlayEnums = {}));
 
 },{}]},{},[2]);

@@ -21,18 +21,9 @@ export class CivChangerClient {
     }
 
     handleMessage(message: { type: SocketEnums, data: any }) {
-        console.log(`DataType: ${message.type} / RawData: ${message.data}`);
-        if (message.type === SocketEnums.AdminShowCiv) {
-            this.techTreeCivChanger.fadeIn(message.data);
-            this.upgradeChanger.fadeInAll(message.data);
-        } else if (message.type === SocketEnums.AdminHideCiv) {
-            this.techTreeCivChanger.fadeOut(message.data);
-            this.upgradeChanger.fadeOutAll(message.data);
-        }
-    }
-
-    showCiv() {
-        this.techTreeCivChanger.fadeIn("Aztecs");
+        console.log(`DataType: ${message.type} / RawData: ${JSON.stringify(message.data)}`);
+        this.upgradeChanger.handleMessage(message.type, message.data);
+        this.techTreeCivChanger.handleMessage(message.type, message.data);
     }
 
     onOpen(event: any) {

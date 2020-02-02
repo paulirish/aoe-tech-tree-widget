@@ -14,18 +14,9 @@ class CivChangerClient {
         this.socket.onerror = this.onError;
     }
     handleMessage(message) {
-        console.log(`DataType: ${message.type} / RawData: ${message.data}`);
-        if (message.type === enums_1.SocketEnums.AdminShowCiv) {
-            this.techTreeCivChanger.fadeIn(message.data);
-            this.upgradeChanger.fadeInAll(message.data);
-        }
-        else if (message.type === enums_1.SocketEnums.AdminHideCiv) {
-            this.techTreeCivChanger.fadeOut(message.data);
-            this.upgradeChanger.fadeOutAll(message.data);
-        }
-    }
-    showCiv() {
-        this.techTreeCivChanger.fadeIn("Aztecs");
+        console.log(`DataType: ${message.type} / RawData: ${JSON.stringify(message.data)}`);
+        this.upgradeChanger.handleMessage(message.type, message.data);
+        this.techTreeCivChanger.handleMessage(message.type, message.data);
     }
     onOpen(event) {
         console.log('[open] Connection established');
