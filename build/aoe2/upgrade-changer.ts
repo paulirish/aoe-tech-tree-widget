@@ -159,15 +159,7 @@ export class UpgradeChanger {
     private getBlacksmithUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-bs-upgrades"></div>`).addClass('age-upgrades');
 
-        if (age === AgeUpgrades.Feudal.toLowerCase()) {
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Forging}`, BlacksmithUpgrades.Forging.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Scale_Mail_Armor}`, BlacksmithUpgrades.Scale_Mail_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Scale_Barding_Armor}`, BlacksmithUpgrades.Scale_Barding_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Fletching}`, BlacksmithUpgrades.Fletching.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Padded_Archer_Armor}`, BlacksmithUpgrades.Padded_Archer_Armor.toLowerCase()));
-        }
-        else if (age === AgeUpgrades.Castle.toLowerCase()) {
+        if (age === AgeUpgrades.Castle.toLowerCase()) {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Iron_Casting}`, BlacksmithUpgrades.Iron_Casting.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BlacksmithUpgrades.Chain_Mail_Armor}`, BlacksmithUpgrades.Chain_Mail_Armor.toLowerCase()));

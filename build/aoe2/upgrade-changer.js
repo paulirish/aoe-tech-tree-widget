@@ -145,15 +145,7 @@ class UpgradeChanger {
     }
     getBlacksmithUpgradesByAge(civ, age) {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-bs-upgrades"></div>`).addClass('age-upgrades');
-        if (age === upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()) {
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Forging}`, upgrade_enums_1.BlacksmithUpgrades.Forging.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Fletching}`, upgrade_enums_1.BlacksmithUpgrades.Fletching.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor.toLowerCase()));
-        }
-        else if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+        if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Iron_Casting}`, upgrade_enums_1.BlacksmithUpgrades.Iron_Casting.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor.toLowerCase()));

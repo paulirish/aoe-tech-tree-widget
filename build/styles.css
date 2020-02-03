@@ -4,8 +4,7 @@ font-family: 'Spectral SC', serif;
 */
 
 .tech-overlay-wrapper {
-    position: relative;
-    display: inline-block;
+    display: inline-flex;
     margin: -1rem;
     z-index: 1;
 }
@@ -54,7 +53,7 @@ font-family: 'Spectral SC', serif;
 }
 
 .div-wrapper {
-    width: 75%;
+    width: 80%;
     height: 85%;
     margin: 1rem auto;
     text-align: center;
@@ -88,6 +87,19 @@ font-family: 'Spectral SC', serif;
     line-height: 1.4rem;
     letter-spacing: -.07rem;
     font-weight: 600;
+}
+
+.civ-unique-unit-wrapper {
+    display: flex;
+    justify-content: space-around;
+}
+
+.civ-elite-unique-unit-upgrade {
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/elite unique unit.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 1rem;
+    height: 1rem;
 }
 
 .mask-img-vertical {

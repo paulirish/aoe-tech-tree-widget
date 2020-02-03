@@ -112,6 +112,24 @@ export class TechTreeCivChanger {
         civIconAndName.append(civIcon.clone()).append(civNameText).append(civIcon.clone());
         wrapperDiv.append(civIconAndName);
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
+
+        const uniqueUnitWrapper = $('<div></div>').addClass(['civ-unique-unit-wrapper']);
+        const uniqueUnit = $('<div></div>').addClass(['civ-unique-unit', 'div-upgrade']);
+        uniqueUnit.css({
+            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civName.toLowerCase()}.png")`,
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+            'transform': 'scaleX(-1)'
+        });
+        uniqueUnitWrapper.append(uniqueUnit);
+        const eliteUpgrade = $('<div></div>').addClass('civ-elite-unique-unit-upgrade');
+        const eliteUniqueUnit = uniqueUnit.clone().append(eliteUpgrade);
+        eliteUniqueUnit.css({
+            'transform': 'scaleX(1)'
+        });
+        uniqueUnitWrapper.append(eliteUniqueUnit);
+
+        wrapperDiv.append(uniqueUnitWrapper);
         template.append(wrapperDiv);
         return template;
     }
