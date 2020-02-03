@@ -47,6 +47,7 @@ export class AdminClient {
         this.createClickableCivIcons();
         this.attachTogglesToListeners();
         this.setToggleValue(OverlayEnums.Tech, true);
+        this.setToggleValue(OverlayEnums.Sound, true);
     }
 
     private sendSocketCommand(socketEnum: SocketEnums, data: any) {
@@ -108,12 +109,14 @@ export class AdminClient {
     private getOverlayData(civ: string): any {
         return {
             civ: civ,
+            playSound: this.isToggleChecked(OverlayEnums.Sound),
             overlays: {
                 all: this.isToggleChecked(OverlayEnums.All),
                 tech: this.isToggleChecked(OverlayEnums.Tech),
                 blacksmith: this.isToggleChecked(OverlayEnums.Blacksmith),
                 university: this.isToggleChecked(OverlayEnums.University),
                 monastary: this.isToggleChecked(OverlayEnums.Monastary),
+                dock: this.isToggleChecked(OverlayEnums.Dock),
             }
         };
     }
@@ -218,6 +221,13 @@ export class AdminClient {
             // hide the overlay
         });
         $('#toggle-monastary-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-dock-overlay').click(() => {
             // if the civ is already selected
             // if we toggle on
             // show the overlay

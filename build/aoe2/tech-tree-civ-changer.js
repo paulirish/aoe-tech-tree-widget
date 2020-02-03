@@ -5,6 +5,7 @@ class TechTreeCivChanger {
     constructor(techData, aoe2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
+        this.playSound = false;
         // this.fadeIn("Berbers");
     }
     listenForUrlChanges() {
@@ -32,6 +33,7 @@ class TechTreeCivChanger {
     }
     handleMessage(socketEnum, data) {
         if (socketEnum === enums_1.SocketEnums.AdminShow) {
+            this.playSound = data.playSound;
             if (data.overlays.tech) {
                 this.fadeIn(data.civ);
             }
@@ -58,8 +60,18 @@ class TechTreeCivChanger {
                     }, this.aoe2Config.visibleDuration * 1000);
                 }
             }
-            this.addToBody(htmlElement);
+            let leftOrRight = '';
+            if (this.isPlaceholderEmpty('left')) { //left
+                leftOrRight = 'left';
+            }
+            else { //right
+                leftOrRight = 'right';
+            }
+            this.addToBody(leftOrRight, htmlElement);
         }
+    }
+    isPlaceholderEmpty(placeHolderId) {
+        return $(`#${placeHolderId}-tech-placeholder`).children().length === 0;
     }
     fadeOut(civName) {
         const htmlElement = $(`#${civName}-tech`);
@@ -69,8 +81,9 @@ class TechTreeCivChanger {
             htmlElement.remove();
         }, this.aoe2Config.fadeOutDuration * 1000);
     }
-    addToBody(htmlElement) {
-        $('#tech-overlay-wrapper').append(htmlElement);
+    addToBody(leftOrRight, htmlElement) {
+        $(`#${leftOrRight}-tech-placeholder`).append(htmlElement);
+        // $('#tech-overlay-wrapper').append(htmlElement);
     }
     clearTemplate() {
         $('#civ-name').text('');
@@ -83,9 +96,11 @@ class TechTreeCivChanger {
             'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
             'background-size': 'contain'
         });
-        const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
-        wrapperDiv.append(audio);
-        wrapperDiv.find('#myaudio')[0].volume = this.aoe2Config.volume;
+        if (this.playSound) {
+            const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+            wrapperDiv.append(audio);
+            wrapperDiv.find('#myaudio')[0].volume = this.aoe2Config.volume;
+        }
         const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
         const civIcon = $(`<div></div>`).addClass('civ-icon');
         civIcon.css({

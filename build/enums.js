@@ -27,4 +27,6 @@ var OverlayEnums;
     OverlayEnums["Blacksmith"] = "blacksmith";
     OverlayEnums["University"] = "university";
     OverlayEnums["Monastary"] = "monastary";
+    OverlayEnums["Dock"] = "dock";
+    OverlayEnums["Sound"] = "sound";
 })(OverlayEnums = exports.OverlayEnums || (exports.OverlayEnums = {}));
