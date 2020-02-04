@@ -93,7 +93,7 @@ export class AdminClient {
     }
 
     private isToggleChecked(toggleId: string): boolean {
-        return $(`#toggle-${toggleId}-overlay`).is(':checked');
+        return $(`#toggle-${toggleId.toLowerCase()}-overlay`).is(':checked');
     }
 
     private setToggleValue(toggleId: string, value: boolean): void {
@@ -101,9 +101,11 @@ export class AdminClient {
     }
 
     private isAnyToggleActive(): boolean {
-        return this.isToggleChecked(OverlayEnums.All) || this.isToggleChecked(OverlayEnums.Tech)
-            || this.isToggleChecked(OverlayEnums.Blacksmith) || this.isToggleChecked(OverlayEnums.University)
-            || this.isToggleChecked(OverlayEnums.Monastary);
+        let isToggleActive = false;
+        for (let toggleKey in OverlayEnums){
+            isToggleActive = (isToggleActive || this.isToggleChecked(toggleKey));
+        }
+        return isToggleActive;
     }
 
     private getOverlayData(civ: string): any {

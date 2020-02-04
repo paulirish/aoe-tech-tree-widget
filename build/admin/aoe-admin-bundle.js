@@ -83,15 +83,17 @@ class AdminClient {
         return JSON.stringify({ type: dataType, data: rawData, toClientId: this.config.clientId });
     }
     isToggleChecked(toggleId) {
-        return $(`#toggle-${toggleId}-overlay`).is(':checked');
+        return $(`#toggle-${toggleId.toLowerCase()}-overlay`).is(':checked');
     }
     setToggleValue(toggleId, value) {
         $(`#toggle-${toggleId}-overlay`).prop('checked', value);
     }
     isAnyToggleActive() {
-        return this.isToggleChecked(enums_1.OverlayEnums.All) || this.isToggleChecked(enums_1.OverlayEnums.Tech)
-            || this.isToggleChecked(enums_1.OverlayEnums.Blacksmith) || this.isToggleChecked(enums_1.OverlayEnums.University)
-            || this.isToggleChecked(enums_1.OverlayEnums.Monastary);
+        let isToggleActive = false;
+        for (let toggleKey in enums_1.OverlayEnums) {
+            isToggleActive = (isToggleActive || this.isToggleChecked(toggleKey));
+        }
+        return isToggleActive;
     }
     getOverlayData(civ) {
         return {
