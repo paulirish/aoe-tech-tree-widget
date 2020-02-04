@@ -133,11 +133,20 @@ export class UpgradeChanger {
 
     private createHtmlElement(civName: string, upgradeBuilding: string): JQuery<HTMLElement> {
         const template = $(`<div id="${civName.toLowerCase()}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
+        
         const buildingIcon = $(`<div></div>`).addClass(['div-upgrade']);
         buildingIcon.css({
             "background-image": `url('./images/building-icons/${upgradeBuilding}.tp.png')`,
         });
         template.append(buildingIcon);
+
+        const uniqueUnitIcon = $(`<div></div>`).addClass(['div-upgrade']);
+        uniqueUnitIcon.css({
+            "background-image": `url('./images/civ-unique-units/${civName}.tp.png')`,
+            "border-radius": "0.3rem"
+        });
+
+        template.append(uniqueUnitIcon); 
         if (upgradeBuilding === 'blacksmith') {
             template.append(this.createBlackSmithUpgradesPanel(civName));
         } else if (upgradeBuilding === 'university') {
@@ -287,6 +296,8 @@ export class UpgradeChanger {
         } else if (upgrade === 'feudal' || upgrade === 'castle' || upgrade === 'imperial') {
             upgrade = upgrade.concat('.tp');
             template.addClass('no-border');
+        } else if (upgrade === 'heavy demolition ship') {
+            upgrade = 'heavy demo ship';
         }
         const css: any = {
             "background": `url("./images/upgrade-icons/${upgrade}.png")`,
