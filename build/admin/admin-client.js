@@ -43,7 +43,7 @@ class AdminClient {
     buildHtml() {
         this.createClickableCivIcons();
         this.attachTogglesToListeners();
-        this.initializeClearAllButton();
+        // this.initializeClearAllButton();
         this.setToggleValue(enums_1.OverlayEnums.Tech, true);
         this.setToggleValue(enums_1.OverlayEnums.Sound, true);
     }
@@ -120,7 +120,7 @@ class AdminClient {
             "Magyars", "Malay", "Malians", "Mayans", "Mongols", "Persians", "Portuguese",
             "Saracens", "Slavs", "Spanish", "Tatars", "Teutons", "Turks",
             "Vietnamese", "Vikings"].forEach((civ) => {
-            const civIcon = $(`<div id="civ-icon-clickable"><div id="civ-text" class="civ-text">${civ}</div></div>`).addClass(['civ-tech-icon', 'faded']);
+            const civIcon = $(`<div id="${civ.toLowerCase()}-icon-clickable"><div id="civ-text" class="civ-text">${civ}</div></div>`).addClass(['civ-tech-icon', 'faded']);
             // emblem
             // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
             civIcon.css({
@@ -129,14 +129,10 @@ class AdminClient {
                 'background-repeat': 'no-repeat'
             });
             civIcon.hover(() => {
-                civIcon.css({
-                    'opacity': '1'
-                });
+                civIcon.addClass('not-faded');
             }, () => {
                 if (!this.lastClickedCivs.includes(civ)) { // if we've clicked this civ, dont hide it yet
-                    civIcon.css({
-                        'opacity': '0.5'
-                    });
+                    civIcon.removeClass('not-faded');
                 }
             });
             civIcon.click(() => {
@@ -146,14 +142,12 @@ class AdminClient {
                         this.sendSocketCommand(enums_1.SocketEnums.AdminHide, this.getOverlayData(civ));
                         // this.hideCiv(civ);
                         this.lastClickedCivs = this.lastClickedCivs.filter((clickedCiv) => {
-                            civIcon.addClass('faded');
                             civIcon.removeClass('not-faded');
                             return civ !== clickedCiv;
                         });
                     }
                     else { // show the civ
                         this.sendSocketCommand(enums_1.SocketEnums.AdminShow, this.getOverlayData(civ));
-                        civIcon.removeClass('faded');
                         civIcon.addClass('not-faded');
                         this.lastClickedCivs.push(civ);
                     }
@@ -166,6 +160,10 @@ class AdminClient {
     initializeClearAllButton() {
         $('#btn-clear-all').click(() => {
             this.sendSocketCommand(enums_1.SocketEnums.AdminHideAll, { civ: this.lastClickedCivs, overlay: enums_1.OverlayEnums.All });
+            this.lastClickedCivs.forEach((civ) => {
+                $(`#${civ.toLowerCase()}-icon-clickable`).removeClass('not-faded');
+            });
+            this.lastClickedCivs = [];
         });
     }
     attachTogglesToListeners() {

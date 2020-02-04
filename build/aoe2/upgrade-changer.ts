@@ -5,10 +5,12 @@ import { SocketEnums, OverlayEnums } from "../enums";
 export class UpgradeChanger {
     data: any;
     aoe2Config: AoE2Config;
+    playSound: boolean;
 
     constructor(upgradeData: any, aoe2Config: AoE2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
+        this.playSound = false;
         // this.fadeInAll("Berbers");
     }
 
@@ -68,6 +70,7 @@ export class UpgradeChanger {
                 leftOrRight = 'right';
             }
             const data = rawData;
+            this.playSound = data.playSound;
             if (data.overlays.all) {
                 this.fadeInAll(data.civ);
             } else {
@@ -143,6 +146,12 @@ export class UpgradeChanger {
             template.append(this.createMonestaryUpgradesPanel(civName));
         } else if (upgradeBuilding === 'dock') {
             template.append(this.createDockUpgradesPanel(civName));
+        }
+
+        if (this.playSound) {
+            const audio = $(`<audio autoplay id="myaudio"><source src="./sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+            template.append(audio);
+            (template.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
         }
 
         return template;

@@ -284,6 +284,7 @@ class UpgradeChanger {
     constructor(upgradeData, aoe2Config) {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
+        this.playSound = false;
         // this.fadeInAll("Berbers");
     }
     fadeInAll(civName) {
@@ -344,6 +345,7 @@ class UpgradeChanger {
                 leftOrRight = 'right';
             }
             const data = rawData;
+            this.playSound = data.playSound;
             if (data.overlays.all) {
                 this.fadeInAll(data.civ);
             }
@@ -417,6 +419,11 @@ class UpgradeChanger {
         }
         else if (upgradeBuilding === 'dock') {
             template.append(this.createDockUpgradesPanel(civName));
+        }
+        if (this.playSound) {
+            const audio = $(`<audio autoplay id="myaudio"><source src="./sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+            template.append(audio);
+            template.find('#myaudio')[0].volume = this.aoe2Config.volume;
         }
         return template;
     }
