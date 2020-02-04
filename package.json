@@ -16,7 +16,7 @@
     "build": "tsc && npm run browserify-all && npm run copy-all",
     "test": "ts-node node_modules/jasmine/bin/jasmine",
     "start-server": "node ./build/admin/admin-server-index.js",
-    "deploy": "gh-pages -d build"
+    "deploy": "npm run build && gh-pages -d build"
   },
   "repository": {
     "type": "git",

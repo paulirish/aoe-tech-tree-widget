@@ -1,3 +1,4 @@
+build/
 # Do not commit our secrets please
 **/*/secrets.ts
 **/*/secrets.js
