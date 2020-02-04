@@ -15,7 +15,8 @@
     "browserify-all": "npm run browserify-index && npm run browserify-admin",
     "build": "tsc && npm run browserify-all && npm run copy-all",
     "test": "ts-node node_modules/jasmine/bin/jasmine",
-    "start-server": "node ./build/admin/admin-server-index.js"
+    "start-server": "node ./build/admin/admin-server-index.js",
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "@types/ws": "^7.2.0",
     "browserify": "^16.5.0",
     "copyfiles": "^2.2.0",
+    "gh-pages": "^2.2.0",
     "jasmine": "^3.5.0",
     "jquery": "^3.4.1",
     "ts-node": "^8.6.2",
