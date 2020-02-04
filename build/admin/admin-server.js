@@ -39,6 +39,7 @@ class AdminServer {
                 if (websocket) {
                     let validMessageType = false;
                     for (let socketEnum in enums_1.SocketEnums) {
+                        console.log(`checking msgType:${msg.type} again ${socketEnum}`);
                         validMessageType = validMessageType || (socketEnum === msg.type);
                     }
                     if (validMessageType) {
