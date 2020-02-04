@@ -420,11 +420,11 @@ class UpgradeChanger {
         else if (upgradeBuilding === 'dock') {
             template.append(this.createDockUpgradesPanel(civName));
         }
-        if (this.playSound) {
-            const audio = $(`<audio autoplay id="myaudio"><source src="./sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
-            template.append(audio);
-            template.find('#myaudio')[0].volume = this.aoe2Config.volume;
-        }
+        // if (this.playSound) {
+        //     const audio = $(`<audio autoplay id="myaudio"><source src="./sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+        //     template.append(audio);
+        //     (template.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
+        // }
         return template;
     }
     createBlackSmithUpgradesPanel(civName) {
