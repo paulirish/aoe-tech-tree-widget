@@ -139,7 +139,7 @@ export class AdminClient {
             "Vietnamese", "Vikings"].forEach((civ) => {
                 const civIcon = $(`<div id="${civ.toLowerCase()}-icon-clickable"><div id="civ-text" class="civ-text">${civ}</div></div>`).addClass(['civ-tech-icon', 'faded']);
                 // emblem
-                // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
+                // ./images/civ-emblems/aztecs.png
                 civIcon.css({
                     'background': `url("../images/civ-unique-units/${civ.toLowerCase()}.png`,
                     'background-size': 'cover',
