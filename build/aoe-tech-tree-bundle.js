@@ -377,9 +377,7 @@ class UpgradeChanger {
         const template = $(`<div id="${civName.toLowerCase()}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
         const buildingIcon = $(`<div></div>`).addClass(['div-upgrade']);
         buildingIcon.css({
-            "background": `url('https://treee.github.io/aoe-tech-tree-widget/build/images/building-icons/${upgradeBuilding}.png')`,
-            "background-size": "contain",
-            "background-repeat": "no-repeat"
+            "background-image": `url('./images/building-icons/${upgradeBuilding}.tp.png')`,
         });
         template.append(buildingIcon);
         if (upgradeBuilding === 'blacksmith') {
@@ -481,10 +479,6 @@ class UpgradeChanger {
     }
     getDockUpgradesByAge(civ, age) {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-dock-upgrades"></div>`).addClass('age-upgrades');
-        groupOfIcons.css({
-            'display': 'block',
-            'width': '21rem'
-        });
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Galleon}`, upgrade_enums_1.DockUpgrades.Galleon.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship}`, upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship.toLowerCase()));
@@ -519,7 +513,7 @@ class UpgradeChanger {
             template.addClass('disabled-upgrade');
         }
         const css = {
-            "background": `url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/${upgrade}.png")`,
+            "background": `url("./images/upgrade-icons/${upgrade}.png")`,
             "background-size": "contain",
             "background-repeat": "no-repeat",
         };
