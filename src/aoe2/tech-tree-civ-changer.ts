@@ -4,10 +4,12 @@ import { SocketEnums } from "../enums";
 export class TechTreeCivChanger {
     data: any;
     aoe2Config: AoE2Config;
+    playSound: boolean;
 
     constructor(techData: any, aoe2Config: AoE2Config) {
         this.data = techData;
         this.aoe2Config = aoe2Config;
+        this.playSound = false;
         // this.fadeIn("Berbers");
     }
 
@@ -38,6 +40,7 @@ export class TechTreeCivChanger {
 
     public handleMessage(socketEnum: SocketEnums, data: any) {
         if (socketEnum === SocketEnums.AdminShow) {
+            this.playSound = data.playSound;
             if (data.overlays.tech) {
                 this.fadeIn(data.civ);
             }
@@ -66,8 +69,20 @@ export class TechTreeCivChanger {
                     }, this.aoe2Config.visibleDuration * 1000);
                 }
             }
-            this.addToBody(htmlElement);
+
+            let leftOrRight = '';
+            if (this.isPlaceholderEmpty('left')) {//left
+                leftOrRight = 'left';
+            } else { //right
+                leftOrRight = 'right';
+            }
+
+            this.addToBody(leftOrRight, htmlElement);
         }
+    }
+
+    private isPlaceholderEmpty(placeHolderId: string): boolean {
+        return $(`#${placeHolderId}-tech-placeholder`).children().length === 0;
     }
 
     private fadeOut(civName: string) {
@@ -79,8 +94,9 @@ export class TechTreeCivChanger {
         }, this.aoe2Config.fadeOutDuration * 1000);
     }
 
-    private addToBody(htmlElement: JQuery<HTMLElement>) {
-        $('#tech-overlay-wrapper').append(htmlElement);
+    private addToBody(leftOrRight: string, htmlElement: JQuery<HTMLElement>) {
+        $(`#${leftOrRight}-tech-placeholder`).append(htmlElement);
+        // $('#tech-overlay-wrapper').append(htmlElement);
     }
 
     private clearTemplate() {
@@ -95,9 +111,12 @@ export class TechTreeCivChanger {
             'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
             'background-size': 'contain'
         });
-        const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
-        wrapperDiv.append(audio);
-        (wrapperDiv.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
+
+        if (this.playSound) {
+            const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+            wrapperDiv.append(audio);
+            (wrapperDiv.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
+        }
 
         const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
 
@@ -112,6 +131,24 @@ export class TechTreeCivChanger {
         civIconAndName.append(civIcon.clone()).append(civNameText).append(civIcon.clone());
         wrapperDiv.append(civIconAndName);
         wrapperDiv.append($('<div></div>').addClass('civ-desc'));
+
+        const uniqueUnitWrapper = $('<div></div>').addClass(['civ-unique-unit-wrapper']);
+        const uniqueUnit = $('<div></div>').addClass(['civ-unique-unit', 'div-upgrade']);
+        uniqueUnit.css({
+            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civName.toLowerCase()}.png")`,
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+            'transform': 'scaleX(-1)'
+        });
+        uniqueUnitWrapper.append(uniqueUnit);
+        const eliteUpgrade = $('<div></div>').addClass('civ-elite-unique-unit-upgrade');
+        const eliteUniqueUnit = uniqueUnit.clone().append(eliteUpgrade);
+        eliteUniqueUnit.css({
+            'transform': 'scaleX(1)'
+        });
+        uniqueUnitWrapper.append(eliteUniqueUnit);
+
+        wrapperDiv.append(uniqueUnitWrapper);
         template.append(wrapperDiv);
         return template;
     }

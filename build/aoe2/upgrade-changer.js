@@ -9,14 +9,21 @@ class UpgradeChanger {
         // this.fadeInAll("Berbers");
     }
     fadeInAll(civName) {
+        let leftOrRight = '';
+        if (this.isPlaceholderEmpty('left')) { //left
+            leftOrRight = 'left';
+        }
+        else { //right
+            leftOrRight = 'right';
+        }
         setTimeout(() => {
-            this.fadeIn(civName, 'blacksmith');
+            this.fadeIn(civName, 'blacksmith', leftOrRight);
         }, 100);
         setTimeout(() => {
-            this.fadeIn(civName, 'university');
+            this.fadeIn(civName, 'university', leftOrRight);
         }, 600);
         setTimeout(() => {
-            this.fadeIn(civName, 'monastary');
+            this.fadeIn(civName, 'monastary', leftOrRight);
         }, 1100);
         // setTimeout(() => {
         //     this.fadeIn(civName, 'dock');
@@ -51,6 +58,13 @@ class UpgradeChanger {
             }
         }
         else if (type === enums_1.SocketEnums.AdminShow) {
+            let leftOrRight = '';
+            if (this.isPlaceholderEmpty('left')) { //left
+                leftOrRight = 'left';
+            }
+            else { //right
+                leftOrRight = 'right';
+            }
             const data = rawData;
             if (data.overlays.all) {
                 this.fadeInAll(data.civ);
@@ -58,13 +72,13 @@ class UpgradeChanger {
             else {
                 Object.keys(data.overlays).forEach((key) => {
                     if (data.overlays[key] && key !== enums_1.OverlayEnums.Tech && key !== enums_1.OverlayEnums.All) {
-                        this.fadeIn(data.civ, key);
+                        this.fadeIn(data.civ, key, leftOrRight);
                     }
                 });
             }
         }
     }
-    fadeIn(civName, building) {
+    fadeIn(civName, building, leftOrRight) {
         // if the element doesnt alreayd exist
         if (!$(`#${civName.toLowerCase()}-upgrades-${building}`).length) {
             const htmlElement = this.createHtmlElement(civName, building);
@@ -76,8 +90,11 @@ class UpgradeChanger {
                     }, this.aoe2Config.visibleDuration * 1000);
                 }
             }
-            this.addToBody(htmlElement);
+            this.addToBody(leftOrRight, htmlElement);
         }
+    }
+    isPlaceholderEmpty(placeHolderId) {
+        return $(`#${placeHolderId}-upgrade-placeholder`).children().length === 0;
     }
     fadeOut(civName, building) {
         const id = `${civName.toLowerCase()}-upgrades-${building}`;
@@ -88,8 +105,8 @@ class UpgradeChanger {
             htmlElement.remove();
         }, this.aoe2Config.fadeOutDuration * 1000);
     }
-    addToBody(htmlElement) {
-        $('#upgrade-overlay-wrapper').append(htmlElement);
+    addToBody(leftOrRight, htmlElement) {
+        $(`#${leftOrRight}-upgrade-placeholder`).append(htmlElement);
     }
     createHtmlElement(civName, upgradeBuilding) {
         const template = $(`<div id="${civName.toLowerCase()}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
@@ -137,15 +154,7 @@ class UpgradeChanger {
     }
     getBlacksmithUpgradesByAge(civ, age) {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-bs-upgrades"></div>`).addClass('age-upgrades');
-        if (age === upgrade_enums_1.AgeUpgrades.Feudal.toLowerCase()) {
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Forging}`, upgrade_enums_1.BlacksmithUpgrades.Forging.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Mail_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Scale_Barding_Armor.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Fletching}`, upgrade_enums_1.BlacksmithUpgrades.Fletching.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Padded_Archer_Armor.toLowerCase()));
-        }
-        else if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
+        if (age === upgrade_enums_1.AgeUpgrades.Castle.toLowerCase()) {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Iron_Casting}`, upgrade_enums_1.BlacksmithUpgrades.Iron_Casting.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor}`, upgrade_enums_1.BlacksmithUpgrades.Chain_Mail_Armor.toLowerCase()));
@@ -169,16 +178,13 @@ class UpgradeChanger {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Masonry}`, upgrade_enums_1.UniversityUpgrades.Masonry.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Fortified_Wall}`, upgrade_enums_1.UniversityUpgrades.Fortified_Wall.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Ballistics}`, upgrade_enums_1.UniversityUpgrades.Ballistics.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Guard_Tower}`, upgrade_enums_1.UniversityUpgrades.Guard_Tower.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Heated_Shot}`, upgrade_enums_1.UniversityUpgrades.Heated_Shot.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Murder_Holes}`, upgrade_enums_1.UniversityUpgrades.Murder_Holes.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Treadmill_Crane}`, upgrade_enums_1.UniversityUpgrades.Treadmill_Crane.toLowerCase()));
         }
         else if (age === upgrade_enums_1.AgeUpgrades.Imp.toLowerCase()) {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Architecture}`, upgrade_enums_1.UniversityUpgrades.Architecture.toLowerCase()));
-            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Chemistry}`, upgrade_enums_1.UniversityUpgrades.Chemistry.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Bombard_Tower}`, upgrade_enums_1.UniversityUpgrades.Bombard_Tower.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Siege_Engineers}`, upgrade_enums_1.UniversityUpgrades.Siege_Engineers.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.UniversityUpgrades.Keep}`, upgrade_enums_1.UniversityUpgrades.Keep.toLowerCase()));
@@ -209,9 +215,9 @@ class UpgradeChanger {
     getDockUpgradesByAge(civ, age) {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-dock-upgrades"></div>`).addClass('age-upgrades');
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+        groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Galleon}`, upgrade_enums_1.DockUpgrades.Galleon.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship}`, upgrade_enums_1.DockUpgrades.Heavy_Demolition_Ship.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Fast_Fire_Ship}`, upgrade_enums_1.DockUpgrades.Fast_Fire_Ship.toLowerCase()));
-        groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Galleon}`, upgrade_enums_1.DockUpgrades.Galleon.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Cannon_Galleon}`, upgrade_enums_1.DockUpgrades.Cannon_Galleon.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Elite_Cannon_Galleon}`, upgrade_enums_1.DockUpgrades.Elite_Cannon_Galleon.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${upgrade_enums_1.DockUpgrades.Dry_Dock}`, upgrade_enums_1.DockUpgrades.Dry_Dock.toLowerCase()));

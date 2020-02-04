@@ -3,11 +3,16 @@ font-family: 'Cinzel Decorative', cursive;
 font-family: 'Spectral SC', serif;
 */
 
+.overlay-wrapper {
+    overflow:hidden;
+}
+
 .tech-overlay-wrapper {
-    position: relative;
-    display: inline-block;
+    position: absolute;
+    width: 100%;
+    display: flex;
     margin: -1rem;
-    z-index: 1;
+    justify-content: space-between;
 }
 
 .upgrade-overlay-wrapper {
@@ -17,15 +22,19 @@ font-family: 'Spectral SC', serif;
     padding-top: 1rem;
     width: 45rem;
     height: 38rem;
+  /*
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5rem;
+  */
 }
 
 .div-background {
-    display: inline-block;
-    width: 33rem;
-    height: 38rem;   
+    width: inherit;
+    height: fit-content;
     background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/popup_menu_bg_portrait.png");
-    background-size: contain;
-    background-repeat: no-repeat;
+    background-repeat: round;
 }
 
 .div-upgrade-background-wrapper {
@@ -45,6 +54,27 @@ font-family: 'Spectral SC', serif;
     margin-top: 44px;
     flex-direction: column;
     align-items: baseline;
+  /*
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 28rem;
+    height: 12rem;
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/chatbar_bg.png");
+    background-repeat: round;
+    text-align: center;
+    margin-bottom: -3rem;
+}
+
+.tech-overlay-placeholder {
+    display: inherit;
+    width: 25vw;
+}
+
+.upgrade-overlay-placeholder {
+    display: inherit;
+    flex-direction: column;
+  */
 }
 
 .div-upgrade {
@@ -58,7 +88,7 @@ font-family: 'Spectral SC', serif;
 }
 
 .div-wrapper {
-    width: 75%;
+    width: 80%;
     height: 85%;
     margin: 1rem auto;
     text-align: center;
@@ -92,6 +122,19 @@ font-family: 'Spectral SC', serif;
     line-height: 1.4rem;
     letter-spacing: -.07rem;
     font-weight: 600;
+}
+
+.civ-unique-unit-wrapper {
+    display: flex;
+    justify-content: space-around;
+}
+
+.civ-elite-unique-unit-upgrade {
+    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/elite unique unit.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 1rem;
+    height: 1rem;
 }
 
 .mask-img-vertical {
@@ -237,6 +280,12 @@ font-family: 'Spectral SC', serif;
     display: block;
     /* width: 18rem; */
     height: 3.3rem;
+  /*
+    display: flex;
+    justify-content: space-evenly;
+    width: 22rem;
+    padding: .1rem;
+  */
 }
 
 .disabled-upgrade::before {
