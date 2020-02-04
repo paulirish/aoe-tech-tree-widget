@@ -16,18 +16,10 @@ font-family: 'Spectral SC', serif;
 }
 
 .upgrade-overlay-wrapper {
-    position: fixed;
-    display: inline-block;
-    padding-left: 4rem;
-    padding-top: 1rem;
-    width: 45rem;
-    height: 38rem;
-  /*
     width: 100%;
     display: flex;
     justify-content: space-between;
     margin-top: 5rem;
-  */
 }
 
 .div-background {
@@ -40,29 +32,22 @@ font-family: 'Spectral SC', serif;
 .div-upgrade-background-wrapper {
     margin: -1rem;
     display: inline-flex;
-    width: 720px;
-    height: 181px;
-    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/chatbar_bg.png");
-    background-size: 720px 194px;
-    background-repeat: no-repeat;
-    text-align: center;
-    margin-top: 8px;
+    align-items: baseline;
+    height: 12rem;
+    width: 28rem;
+    background: url("./images/chatbar_bg.png");
+    background-repeat: round;
 }
 
 .div-upgrade-background {
     display: flex;
-    margin-top: 44px;
     flex-direction: column;
-    align-items: baseline;
-  /*
-    display: flex;
+
     align-items: center;
     justify-content: space-evenly;
-    width: 28rem;
-    height: 12rem;
-    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/chatbar_bg.png");
+    width: 24rem;
+    height: 6rem;
     background-repeat: round;
-    text-align: center;
     margin-bottom: -3rem;
 }
 
@@ -74,17 +59,16 @@ font-family: 'Spectral SC', serif;
 .upgrade-overlay-placeholder {
     display: inherit;
     flex-direction: column;
-  */
+
 }
 
 .div-upgrade {
     display: inline-block;
-    width: 2.7rem;
-    height: 2.7rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border: #654e3b 1px solid;
     box-shadow: 3px 4px 9px #614d3d;
     border-radius: 0.2rem;
-    margin: 0 0.2rem;
 }
 
 .div-wrapper {
@@ -130,7 +114,7 @@ font-family: 'Spectral SC', serif;
 }
 
 .civ-elite-unique-unit-upgrade {
-    background: url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/elite unique unit.png");
+    background: url("./images/upgrade-icons/elite unique unit.png");
     background-size: contain;
     background-repeat: no-repeat;
     width: 1rem;
@@ -277,15 +261,13 @@ font-family: 'Spectral SC', serif;
 }
 
 .age-upgrades {
-    display: block;
-    /* width: 18rem; */
-    height: 3.3rem;
-  /*
     display: flex;
     justify-content: space-evenly;
     width: 22rem;
-    padding: .1rem;
-  */
+}
+
+.no-border {
+    border: none;
 }
 
 .disabled-upgrade::before {
@@ -384,21 +366,19 @@ font-family: 'Spectral SC', serif;
     background-repeat: no-repeat;
 
     position: relative;
-    left: 40px;
-    top: 44px;
+    left: 1rem;
+    top: 4rem;
 
     box-shadow: none;
     border: 0px;
     border-radius: 0px;
-    width: 90px;
-    height: 90px;
-    margin-right: 30px;
+    width: 4rem;
+    height: 6rem;
 }
 
 /* age image */
 .age-upgrades > .div-upgrade:first-child {
     border-radius: 0;
-    margin: 0 30px;
     box-shadow: none;
     mix-blend-mode: multiply;
 }

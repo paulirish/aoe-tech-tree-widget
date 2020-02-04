@@ -77,6 +77,19 @@ class UpgradeChanger {
                 });
             }
         }
+        else if (type === enums_1.SocketEnums.AdminHideAll) {
+            // hide eerything
+            $(`#left-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#left-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#left-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+            $(`#right-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#right-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#right-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+        }
     }
     fadeIn(civName, building, leftOrRight) {
         // if the element doesnt alreayd exist
@@ -246,6 +259,10 @@ class UpgradeChanger {
         }
         else if (!!disabledUnit) {
             template.addClass('disabled-upgrade');
+        }
+        else if (upgrade === 'feudal' || upgrade === 'castle' || upgrade === 'imperial') {
+            upgrade = upgrade.concat('.tp');
+            template.addClass('no-border');
         }
         const css = {
             "background": `url("./images/upgrade-icons/${upgrade}.png")`,

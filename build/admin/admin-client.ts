@@ -46,6 +46,7 @@ export class AdminClient {
     private buildHtml() {
         this.createClickableCivIcons();
         this.attachTogglesToListeners();
+        this.initializeClearAllButton();
         this.setToggleValue(OverlayEnums.Tech, true);
         this.setToggleValue(OverlayEnums.Sound, true);
     }
@@ -60,6 +61,10 @@ export class AdminClient {
 
     hideCiv(civName: string) {
         this.socket.send(this.formatDataForWebsocket(SocketEnums.AdminHideCiv, civName));
+    }
+
+    hideAll() {
+        this.socket.send(this.formatDataForWebsocket(SocketEnums.AdminHideAll, ''));
     }
 
     onOpen(event: any) {
@@ -97,7 +102,7 @@ export class AdminClient {
     }
 
     private setToggleValue(toggleId: string, value: boolean): void {
-        $(`#toggle-${toggleId}-overlay`).prop('checked', value);
+        $(`#toggle-${toggleId.toLowerCase()}-overlay`).prop('checked', value);
     }
 
     private isAnyToggleActive(): boolean {
@@ -136,7 +141,7 @@ export class AdminClient {
                 // emblem
                 // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
                 civIcon.css({
-                    'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civ.toLowerCase()}.png`,
+                    'background': `url("../images/civ-unique-units/${civ.toLowerCase()}.png`,
                     'background-size': 'cover',
                     'background-repeat': 'no-repeat'
                 });
@@ -179,18 +184,22 @@ export class AdminClient {
         $('body').append(divWrapper);
     }
 
+    initializeClearAllButton() {
+        $('#btn-clear-all').click(() => {
+            this.sendSocketCommand(SocketEnums.AdminHideAll, { civ: this.lastClickedCivs, overlay: OverlayEnums.All });
+        });
+    }
+
     attachTogglesToListeners() {
         $('#toggle-all-overlay').click(() => {
             if (this.isToggleChecked(OverlayEnums.All)) {
-                this.setToggleValue(OverlayEnums.Tech, true);
-                this.setToggleValue(OverlayEnums.Blacksmith, true);
-                this.setToggleValue(OverlayEnums.University, true);
-                this.setToggleValue(OverlayEnums.Monastary, true);
+                for (let toggleKey in OverlayEnums){
+                    this.setToggleValue(toggleKey, true);
+                }
             } else {
-                this.setToggleValue(OverlayEnums.Tech, false);
-                this.setToggleValue(OverlayEnums.Blacksmith, false);
-                this.setToggleValue(OverlayEnums.University, false);
-                this.setToggleValue(OverlayEnums.Monastary, false);
+                for (let toggleKey in OverlayEnums){
+                    this.setToggleValue(toggleKey, false);
+                }
             }
 
             if (this.lastClickedCivs.length > 0) {

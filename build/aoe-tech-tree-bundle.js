@@ -171,6 +171,19 @@ class TechTreeCivChanger {
                 this.fadeOut(data.civ);
             }
         }
+        else if (socketEnum === enums_1.SocketEnums.AdminHideAll) {
+            // hide everything
+            $(`#left-tech-placeholder`).removeClass('fade-in');
+            $(`#left-tech-placeholder`).addClass('fade-out');
+            setTimeout(() => {
+                $(`#left-tech-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+            $(`#right-tech-placeholder`).removeClass('fade-in');
+            $(`#right-tech-placeholder`).addClass('fade-out');
+            setTimeout(() => {
+                $(`#right-tech-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+        }
     }
     fadeIn(civName) {
         if (!$(`#${civName}-tech`).length) {
@@ -221,18 +234,18 @@ class TechTreeCivChanger {
         const template = $(`<div id="${civName}-tech"></div>`).addClass(['div-background', 'mask-img-vertical']);
         const wrapperDiv = $('<div id="wrapper"></div>').addClass('div-wrapper');
         wrapperDiv.css({
-            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/${civName.toLowerCase()}.png")`,
+            'background': `url("./images/civ-emblems/${civName.toLowerCase()}.png")`,
             'background-size': 'contain'
         });
         if (this.playSound) {
-            const audio = $(`<audio autoplay id="myaudio"><source src="https://treee.github.io/aoe-tech-tree-widget/build/sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
+            const audio = $(`<audio autoplay id="myaudio"><source src="./sounds/${civName}.mp3" type="audio/mp3"/></audio>`);
             wrapperDiv.append(audio);
             wrapperDiv.find('#myaudio')[0].volume = this.aoe2Config.volume;
         }
         const civIconAndName = $('<div></div>').addClass('civ-icon-and-name');
         const civIcon = $(`<div></div>`).addClass('civ-icon');
         civIcon.css({
-            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-icons/${civName.toLowerCase()}.png")`,
+            'background': `url("./images/civ-icons/${civName.toLowerCase()}.png")`,
             'background-size': 'contain',
             'background-repeat': 'no-repeat'
         });
@@ -243,7 +256,7 @@ class TechTreeCivChanger {
         const uniqueUnitWrapper = $('<div></div>').addClass(['civ-unique-unit-wrapper']);
         const uniqueUnit = $('<div></div>').addClass(['civ-unique-unit', 'div-upgrade']);
         uniqueUnit.css({
-            'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civName.toLowerCase()}.png")`,
+            'background': `url("./images/civ-unique-units/${civName.toLowerCase()}.png")`,
             'background-size': 'contain',
             'background-repeat': 'no-repeat',
             'transform': 'scaleX(-1)'
@@ -341,6 +354,19 @@ class UpgradeChanger {
                     }
                 });
             }
+        }
+        else if (type === enums_1.SocketEnums.AdminHideAll) {
+            // hide eerything
+            $(`#left-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#left-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#left-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+            $(`#right-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#right-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#right-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
         }
     }
     fadeIn(civName, building, leftOrRight) {
@@ -511,6 +537,10 @@ class UpgradeChanger {
         }
         else if (!!disabledUnit) {
             template.addClass('disabled-upgrade');
+        }
+        else if (upgrade === 'feudal' || upgrade === 'castle' || upgrade === 'imperial') {
+            upgrade = upgrade.concat('.tp');
+            template.addClass('no-border');
         }
         const css = {
             "background": `url("./images/upgrade-icons/${upgrade}.png")`,

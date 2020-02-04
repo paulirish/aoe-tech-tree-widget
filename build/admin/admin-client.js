@@ -43,6 +43,7 @@ class AdminClient {
     buildHtml() {
         this.createClickableCivIcons();
         this.attachTogglesToListeners();
+        this.initializeClearAllButton();
         this.setToggleValue(enums_1.OverlayEnums.Tech, true);
         this.setToggleValue(enums_1.OverlayEnums.Sound, true);
     }
@@ -54,6 +55,9 @@ class AdminClient {
     }
     hideCiv(civName) {
         this.socket.send(this.formatDataForWebsocket(enums_1.SocketEnums.AdminHideCiv, civName));
+    }
+    hideAll() {
+        this.socket.send(this.formatDataForWebsocket(enums_1.SocketEnums.AdminHideAll, ''));
     }
     onOpen(event) {
         console.log('[open] Connection established');
@@ -85,7 +89,7 @@ class AdminClient {
         return $(`#toggle-${toggleId.toLowerCase()}-overlay`).is(':checked');
     }
     setToggleValue(toggleId, value) {
-        $(`#toggle-${toggleId}-overlay`).prop('checked', value);
+        $(`#toggle-${toggleId.toLowerCase()}-overlay`).prop('checked', value);
     }
     isAnyToggleActive() {
         let isToggleActive = false;
@@ -120,7 +124,7 @@ class AdminClient {
             // emblem
             // https://treee.github.io/aoe-tech-tree-widget/build/images/civ-emblems/aztecs.png
             civIcon.css({
-                'background': `url("https://treee.github.io/aoe-tech-tree-widget/build/images/civ-unique-units/${civ.toLowerCase()}.png`,
+                'background': `url("../images/civ-unique-units/${civ.toLowerCase()}.png`,
                 'background-size': 'cover',
                 'background-repeat': 'no-repeat'
             });
@@ -159,19 +163,22 @@ class AdminClient {
         });
         $('body').append(divWrapper);
     }
+    initializeClearAllButton() {
+        $('#btn-clear-all').click(() => {
+            this.sendSocketCommand(enums_1.SocketEnums.AdminHideAll, { civ: this.lastClickedCivs, overlay: enums_1.OverlayEnums.All });
+        });
+    }
     attachTogglesToListeners() {
         $('#toggle-all-overlay').click(() => {
             if (this.isToggleChecked(enums_1.OverlayEnums.All)) {
-                this.setToggleValue(enums_1.OverlayEnums.Tech, true);
-                this.setToggleValue(enums_1.OverlayEnums.Blacksmith, true);
-                this.setToggleValue(enums_1.OverlayEnums.University, true);
-                this.setToggleValue(enums_1.OverlayEnums.Monastary, true);
+                for (let toggleKey in enums_1.OverlayEnums) {
+                    this.setToggleValue(toggleKey, true);
+                }
             }
             else {
-                this.setToggleValue(enums_1.OverlayEnums.Tech, false);
-                this.setToggleValue(enums_1.OverlayEnums.Blacksmith, false);
-                this.setToggleValue(enums_1.OverlayEnums.University, false);
-                this.setToggleValue(enums_1.OverlayEnums.Monastary, false);
+                for (let toggleKey in enums_1.OverlayEnums) {
+                    this.setToggleValue(toggleKey, false);
+                }
             }
             if (this.lastClickedCivs.length > 0) {
                 if (this.isToggleChecked(enums_1.OverlayEnums.All)) {

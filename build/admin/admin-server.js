@@ -37,11 +37,13 @@ class AdminServer {
                 const websocket = this.clients[msg.toClientId];
                 console.log(`msg: ${msg} socket: ${!!websocket}`, msg);
                 if (websocket) {
-                    if (msg.type === enums_1.SocketEnums.AdminShowCiv) {
-                        websocket.send(this.formatDataForWebsocket(enums_1.SocketEnums.AdminShowCiv, msg.data));
+                    let validMessageType = false;
+                    for (let socketEnum in enums_1.SocketEnums) {
+                        validMessageType = validMessageType || (socketEnum.toLowerCase() === msg.type.toLowerCase());
                     }
-                    else if (msg.type === enums_1.SocketEnums.AdminHideCiv) {
-                        websocket.send(this.formatDataForWebsocket(enums_1.SocketEnums.AdminHideCiv, msg.data));
+                    if (validMessageType) {
+                        console.log('sending to client');
+                        websocket.send(this.formatDataForWebsocket(msg.type, msg.data));
                     }
                 }
             });

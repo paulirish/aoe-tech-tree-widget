@@ -77,6 +77,20 @@ export class UpgradeChanger {
                     }
                 });
             }
+        } else if (type === SocketEnums.AdminHideAll) {
+            // hide eerything
+            $(`#left-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#left-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#left-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+
+            $(`#right-upgrade-placeholder`).removeClass('fade-in-left-to-right');
+            $(`#right-upgrade-placeholder`).addClass('fade-out-right-to-left');
+            setTimeout(() => {
+                $(`#right-upgrade-placeholder`).remove();
+            }, this.aoe2Config.fadeOutDuration * 1000);
+
         }
     }
 
@@ -136,7 +150,6 @@ export class UpgradeChanger {
 
     private createBlackSmithUpgradesPanel(civName: string): JQuery<HTMLElement> {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-blacksmith"></div>`).addClass(['div-upgrade-background']);
-
         template.append(this.getBlacksmithUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getBlacksmithUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
         return template;
@@ -144,7 +157,6 @@ export class UpgradeChanger {
 
     private createUniversityUpgradesPanel(civName: string): JQuery<HTMLElement> {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-university"></div>`).addClass(['div-upgrade-background']);
-
         template.append(this.getUniversityUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getUniversityUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
         return template;
@@ -263,6 +275,9 @@ export class UpgradeChanger {
             upgrade = 'war galley';
         } else if (!!disabledUnit) {
             template.addClass('disabled-upgrade');
+        } else if (upgrade === 'feudal' || upgrade === 'castle' || upgrade === 'imperial') {
+            upgrade = upgrade.concat('.tp');
+            template.addClass('no-border');
         }
         const css: any = {
             "background": `url("./images/upgrade-icons/${upgrade}.png")`,
