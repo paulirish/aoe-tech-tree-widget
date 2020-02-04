@@ -103,12 +103,7 @@ export class UpgradeChanger {
         const template = $(`<div id="${civName.toLowerCase()}-upgrade-background-wrapper"></div>`).addClass(['div-upgrade-background-wrapper', 'mask-img-horizontal']);
         const buildingIcon = $(`<div></div>`).addClass(['div-upgrade']);
         buildingIcon.css({
-            "background": `url('https://treee.github.io/aoe-tech-tree-widget/build/images/building-icons/${upgradeBuilding}.png')`,
-            "background-size": "contain",
-            "background-repeat": "no-repeat",
-            "position": "relative",
-            "left": "0.5rem",
-            "top": "3rem",
+            "background-image": `url('./images/building-icons/${upgradeBuilding}.tp.png')`,
         });
         template.append(buildingIcon);
         if (upgradeBuilding === 'blacksmith') {
@@ -142,9 +137,6 @@ export class UpgradeChanger {
 
     private createMonestaryUpgradesPanel(civName: string): JQuery<HTMLElement> {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-monastary"></div>`).addClass(['div-upgrade-background']);
-        template.css({
-            "padding-top": '3rem'
-        });
         template.append(this.getMonestaryUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
         template.append(this.getMonestaryUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
         return template;
@@ -189,9 +181,7 @@ export class UpgradeChanger {
 
     private getUniversityUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-univ-upgrades"></div>`).addClass('age-upgrades');
-        groupOfIcons.css({
-            "width": "18rem"
-        });
+
         if (age === AgeUpgrades.Castle.toLowerCase()) {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${UniversityUpgrades.Masonry}`, UniversityUpgrades.Masonry.toLowerCase()));
@@ -218,9 +208,6 @@ export class UpgradeChanger {
     private getMonestaryUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-univ-upgrades"></div>`).addClass('age-upgrades');
         if (age === AgeUpgrades.Castle.toLowerCase()) {
-            groupOfIcons.css({
-                "width": "24rem"
-            });
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${MonestaryUpgrades.Redemption}`, MonestaryUpgrades.Redemption.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${MonestaryUpgrades.Fervor}`, MonestaryUpgrades.Fervor.toLowerCase()));
@@ -230,9 +217,6 @@ export class UpgradeChanger {
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${MonestaryUpgrades.Heresy}`, MonestaryUpgrades.Heresy.toLowerCase()));
         }
         else if (age === AgeUpgrades.Imp.toLowerCase()) {
-            groupOfIcons.css({
-                "width": "16rem"
-            });
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${MonestaryUpgrades.Block_Printing}`, MonestaryUpgrades.Block_Printing.toLowerCase()));
             groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${MonestaryUpgrades.Illumination}`, MonestaryUpgrades.Illumination.toLowerCase()));
@@ -245,9 +229,6 @@ export class UpgradeChanger {
 
     private getDockUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
         const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-dock-upgrades"></div>`).addClass('age-upgrades');
-        groupOfIcons.css({
-            "width": "21rem"
-        });
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${DockUpgrades.Heavy_Demolition_Ship}`, DockUpgrades.Heavy_Demolition_Ship.toLowerCase()));
         groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${DockUpgrades.Fast_Fire_Ship}`, DockUpgrades.Fast_Fire_Ship.toLowerCase()));
@@ -282,7 +263,7 @@ export class UpgradeChanger {
             template.addClass('disabled-upgrade');
         }
         const css: any = {
-            "background": `url("https://treee.github.io/aoe-tech-tree-widget/build/images/upgrade-icons/${upgrade}.png")`,
+            "background": `url("./images/upgrade-icons/${upgrade}.png")`,
             "background-size": "contain",
             "background-repeat": "no-repeat",
         };
