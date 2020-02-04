@@ -52,7 +52,7 @@ export class AdminServer {
                 if (websocket) {
                     let validMessageType = false;
                     for (let socketEnum in SocketEnums){
-                        validMessageType = validMessageType || (socketEnum.toLowerCase() === msg.type.toLowerCase())
+                        validMessageType = validMessageType || (socketEnum === msg.type)
                     }
                     if (validMessageType) {
                         console.log('sending to client');
