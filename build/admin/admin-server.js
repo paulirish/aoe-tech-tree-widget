@@ -40,10 +40,10 @@ class AdminServer {
                     let validMessageType = false;
                     for (let socketEnum in enums_1.SocketEnums) {
                         validMessageType = validMessageType || (socketEnum == msg.type);
-                        console.log(`checking msgType:${msg.type} again ${socketEnum} result:${(socketEnum == msg.type)}`);
+                        // console.log(`checking msgType:${msg.type} again ${socketEnum} result:${(socketEnum == msg.type)}`);
                     }
                     if (validMessageType) {
-                        console.log('sending to client');
+                        // console.log('sending to client');
                         websocket.send(this.formatDataForWebsocket(msg.type, msg.data));
                     }
                 }
