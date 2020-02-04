@@ -142,7 +142,7 @@ export class UpgradeChanger {
 
         const uniqueUnitIcon = $(`<div></div>`).addClass(['div-upgrade']);
         uniqueUnitIcon.css({
-            "background-image": `url('./images/civ-unique-units/${civName}.tp.png')`,
+            "background-image": `url('./images/civ-unique-units/${civName.toLowerCase()}.tp.png')`,
             "border-radius": "0.3rem"
         });
 
