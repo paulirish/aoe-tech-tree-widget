@@ -50,16 +50,9 @@ export class TechTreeCivChanger {
             }
         } else if (socketEnum === SocketEnums.AdminHideAll) {
             // hide everything
-            $(`#left-tech-placeholder`).removeClass('fade-in');
-            $(`#left-tech-placeholder`).addClass('fade-out');
-            setTimeout(() => {
-                $(`#left-tech-placeholder`).remove();
-            }, this.aoe2Config.fadeOutDuration * 1000);
-            $(`#right-tech-placeholder`).removeClass('fade-in');
-            $(`#right-tech-placeholder`).addClass('fade-out');
-            setTimeout(() => {
-                $(`#right-tech-placeholder`).remove();
-            }, this.aoe2Config.fadeOutDuration * 1000);
+            data.civ.forEach((civ: string) => {
+                this.fadeOut(civ);              
+            });
         }
     }
 

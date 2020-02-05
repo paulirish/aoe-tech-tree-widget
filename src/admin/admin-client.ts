@@ -46,7 +46,7 @@ export class AdminClient {
     private buildHtml() {
         this.createClickableCivIcons();
         this.attachTogglesToListeners();
-        // this.initializeClearAllButton();
+        this.initializeClearAllButton();
         this.setToggleValue(OverlayEnums.Tech, true);
         this.setToggleValue(OverlayEnums.Sound, true);
     }
@@ -107,14 +107,14 @@ export class AdminClient {
 
     private isAnyToggleActive(): boolean {
         let isToggleActive = false;
-        for (let toggleKey in OverlayEnums){
+        for (let toggleKey in OverlayEnums) {
             isToggleActive = (isToggleActive || this.isToggleChecked(toggleKey));
         }
         return isToggleActive;
     }
 
-    private getOverlayData(civ: string): any {       
-        return {
+    private getOverlayData(civ: string, setAllValues: boolean = false): any {
+        const overlayData = {
             civ: civ,
             playSound: this.isToggleChecked(OverlayEnums.Sound),
             overlays: {
@@ -130,6 +130,19 @@ export class AdminClient {
                 "siege-workshop": this.isToggleChecked(OverlayEnums["Siege-Workshop"]),
             }
         };
+        if (setAllValues) {
+            overlayData.overlays.all = true;
+            overlayData.overlays.tech = true;
+            overlayData.overlays.blacksmith = true;
+            overlayData.overlays.university = true;
+            overlayData.overlays.monastary = true;
+            overlayData.overlays.dock = true;
+            overlayData.overlays.barracks = true;
+            overlayData.overlays["archery-range"] = true;
+            overlayData.overlays.stable = true;
+            overlayData.overlays["siege-workshop"] = true;
+        }
+        return overlayData;
     }
 
     lastClickedCivs: string[] = [];
@@ -183,8 +196,8 @@ export class AdminClient {
 
     initializeClearAllButton() {
         $('#btn-clear-all').click(() => {
-            this.sendSocketCommand(SocketEnums.AdminHideAll, { civ: this.lastClickedCivs, overlay: OverlayEnums.All });
-            this.lastClickedCivs.forEach((civ) => {              
+            this.sendSocketCommand(SocketEnums.AdminHideAll, { civ: this.lastClickedCivs, overlays: this.getOverlayData('', true) });
+            this.lastClickedCivs.forEach((civ) => {
                 $(`#${civ.toLowerCase()}-icon-clickable`).removeClass('not-faded')
             });
             this.lastClickedCivs = [];
@@ -194,11 +207,11 @@ export class AdminClient {
     attachTogglesToListeners() {
         $('#toggle-all-overlay').click(() => {
             if (this.isToggleChecked(OverlayEnums.All)) {
-                for (let toggleKey in OverlayEnums){
+                for (let toggleKey in OverlayEnums) {
                     this.setToggleValue(toggleKey, true);
                 }
             } else {
-                for (let toggleKey in OverlayEnums){
+                for (let toggleKey in OverlayEnums) {
                     this.setToggleValue(toggleKey, false);
                 }
             }

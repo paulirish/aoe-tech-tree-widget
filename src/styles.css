@@ -37,15 +37,15 @@ font-family: 'Spectral SC', serif;
     width: 28rem;
     background: url("./images/chatbar_bg.png");
     background-repeat: round;
+    text-align: center;
 }
 
 .div-upgrade-background {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
     align-items: center;
     justify-content: space-evenly;
-    width: 24rem;
     height: 6rem;
     background-repeat: round;
     margin-bottom: -3rem;
@@ -366,7 +366,7 @@ font-family: 'Spectral SC', serif;
     background-repeat: no-repeat;
 
     position: relative;
-    left: 1rem;
+    left: 0.5rem;
     top: 4rem;
 
     box-shadow: none;
