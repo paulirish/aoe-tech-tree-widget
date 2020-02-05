@@ -1,5 +1,5 @@
 import { AoE2Config } from "./aoe2-config";
-import { BlacksmithUpgrades, AgeUpgrades, UniversityUpgrades, MonestaryUpgrades, DockUpgrades } from "./upgrade-enums";
+import { BlacksmithUpgrades, AgeUpgrades, UniversityUpgrades, MonestaryUpgrades, DockUpgrades, BarrackUpgrades, StableUpgrades, ArcherRangeUpgrades, SiegeUpgrades } from "./upgrade-enums";
 import { SocketEnums, OverlayEnums } from "../enums";
 
 export class UpgradeChanger {
@@ -11,50 +11,41 @@ export class UpgradeChanger {
         this.data = upgradeData;
         this.aoe2Config = aoe2Config;
         this.playSound = false;
-        // this.fadeInAll("Berbers");
     }
 
-    private fadeInAll(civName: string) {
+    private fadeInAll(civName: string, overlayData: any) {
         let leftOrRight = '';
         if (this.isPlaceholderEmpty('left')) {//left
             leftOrRight = 'left';
         } else { //right
             leftOrRight = 'right';
         }
-        setTimeout(() => {
-            this.fadeIn(civName, 'blacksmith', leftOrRight);
-        }, 100);
-        setTimeout(() => {
-            this.fadeIn(civName, 'university', leftOrRight);
-        }, 600);
-        setTimeout(() => {
-            this.fadeIn(civName, 'monastary', leftOrRight);
-        }, 1100);
-        // setTimeout(() => {
-        //     this.fadeIn(civName, 'dock');
-        // }, 1600);
+        const timeoutWait = 2500 / Object.keys(overlayData).length;
+        Object.keys(overlayData).forEach((key, index) => {
+            if (overlayData[key]) {
+                setTimeout(() => {
+                    this.fadeIn(civName, key, leftOrRight);
+                }, 100 + (timeoutWait * index));
+            }
+        });
     }
 
-    private fadeOutAll(civName: string) {
-        // setTimeout(() => {
-        //     this.fadeOut(civName, 'dock');
-        // }, 50);
-        setTimeout(() => {
-            this.fadeOut(civName, 'monastary');
-        }, 250);
-        setTimeout(() => {
-            this.fadeOut(civName, 'university');
-        }, 450);
-        setTimeout(() => {
-            this.fadeOut(civName, 'blacksmith');
-        }, 650);
+    private fadeOutAll(civName: string, overlayData: any) {
+        const timeoutWait = 2500 / Object.keys(overlayData).length;
+        Object.keys(overlayData).forEach((key, index) => {
+            if (overlayData[key]) {
+                setTimeout(() => {
+                    this.fadeOut(civName, key);
+                }, 50 + (timeoutWait * index));
+            }
+        });
     }
 
     public handleMessage(type: SocketEnums, rawData: any) {
         if (type === SocketEnums.AdminHide) {
             const data = rawData;
             if (data.overlays.all) {
-                this.fadeOutAll(data.civ);
+                this.fadeOutAll(data.civ, data.overlays);
             } else {
                 Object.keys(data.overlays).forEach((key) => {
                     if (data.overlays[key] && key !== OverlayEnums.Tech && key !== OverlayEnums.All) {
@@ -72,7 +63,7 @@ export class UpgradeChanger {
             const data = rawData;
             this.playSound = data.playSound;
             if (data.overlays.all) {
-                this.fadeInAll(data.civ);
+                this.fadeInAll(data.civ, data.overlays);
             } else {
                 Object.keys(data.overlays).forEach((key) => {
                     if (data.overlays[key] && key !== OverlayEnums.Tech && key !== OverlayEnums.All) {
@@ -147,14 +138,22 @@ export class UpgradeChanger {
         });
 
         template.append(uniqueUnitIcon); 
-        if (upgradeBuilding === 'blacksmith') {
+        if (upgradeBuilding === OverlayEnums.Blacksmith) {
             template.append(this.createBlackSmithUpgradesPanel(civName));
-        } else if (upgradeBuilding === 'university') {
+        } else if (upgradeBuilding === OverlayEnums.University) {
             template.append(this.createUniversityUpgradesPanel(civName));
-        } else if (upgradeBuilding === 'monastary') {
+        } else if (upgradeBuilding === OverlayEnums.Monastary) {
             template.append(this.createMonestaryUpgradesPanel(civName));
-        } else if (upgradeBuilding === 'dock') {
+        } else if (upgradeBuilding === OverlayEnums.Dock) {
             template.append(this.createDockUpgradesPanel(civName));
+        } else if (upgradeBuilding === OverlayEnums.Barracks) {
+            template.append(this.createBarracksUpgradesPanel(civName));
+        }else if (upgradeBuilding === OverlayEnums.Stable) {
+            template.append(this.createStableUpgradesPanel(civName));
+        }else if (upgradeBuilding === OverlayEnums["Archery-Range"]) {
+            template.append(this.createArcheryRangeUpgradesPanel(civName));
+        }else if (upgradeBuilding === OverlayEnums["Siege-Workshop"]) {
+            template.append(this.createSiegeUpgradesPanel(civName));
         }
 
         // if (this.playSound) {
@@ -163,6 +162,37 @@ export class UpgradeChanger {
         //     (template.find('#myaudio')[0] as HTMLAudioElement).volume = this.aoe2Config.volume;
         // }
 
+        return template;
+    }
+
+    private createSiegeUpgradesPanel(civName: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName.toLowerCase()}-upgrades-siege-workshop"></div>`).addClass(['div-upgrade-background']);
+        template.append(this.getSiegeUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+
+    private createArcheryRangeUpgradesPanel(civName: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName.toLowerCase()}-upgrades-archery-range"></div>`).addClass(['div-upgrade-background']);
+        template.append(this.getArcheryRangeUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getArcheryRangeUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+
+    private createStableUpgradesPanel(civName: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName.toLowerCase()}-upgrades-stable"></div>`).addClass(['div-upgrade-background']);
+        template.css({
+            'flex-direction': 'row'
+        });
+        template.append(this.getStableUpgradesByAge(civName, AgeUpgrades.Feudal.toLowerCase()));
+        template.append(this.getStableUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getStableUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
+        return template;
+    }
+
+    private createBarracksUpgradesPanel(civName: string): JQuery<HTMLElement> {
+        const template = $(`<div id="${civName.toLowerCase()}-upgrades-barracks"></div>`).addClass(['div-upgrade-background']);
+        template.append(this.getBarracksUpgradesByAge(civName, AgeUpgrades.Castle.toLowerCase()));
+        template.append(this.getBarracksUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
         return template;
     }
 
@@ -191,6 +221,142 @@ export class UpgradeChanger {
         const template = $(`<div id="${civName.toLowerCase()}-upgrades-dock"></div>`).addClass(['div-upgrade-background']);
         template.append(this.getDockUpgradesByAge(civName, AgeUpgrades.Imp.toLowerCase()));
         return template;
+    }
+
+    private getSiegeUpgradesByAge(civName: string, age: string): JQuery<HTMLElement> {
+        const civ = civName.toLowerCase();
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-siege-upgrades"></div>`).addClass('age-upgrades');
+        
+        if (age === AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Onager}`, SiegeUpgrades.Onager.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Siege_Onager}`, SiegeUpgrades.Siege_Onager.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Capped_Ram}`, SiegeUpgrades.Capped_Ram.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Siege_Ram}`, SiegeUpgrades.Siege_Ram.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Heavy_Scorpion}`, SiegeUpgrades.Heavy_Scorpion.toLowerCase()));
+            // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${SiegeUpgrades.Bombard_Cannon}`, SiegeUpgrades.Bombard_Cannon.toLowerCase()));
+        }
+        return groupOfIcons;
+    }
+
+    private getArcheryRangeUpgradesByAge(civName: string, age: string): JQuery<HTMLElement> {
+        const civ = civName.toLowerCase();
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-archery-range-upgrades"></div>`).addClass('age-upgrades');
+        
+        if (age === AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            if (civ === 'turks') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Elite_Skirmisher}`, ArcherRangeUpgrades.Elite_Skirmisher.toLowerCase()));
+            }
+            if (civ === 'spanish' || civ=== 'bulgarians') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Crossbowman}`, ArcherRangeUpgrades.Crossbowman.toLowerCase()));
+            }
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Thumb_Ring}`, ArcherRangeUpgrades.Thumb_Ring.toLowerCase()));
+        }
+        else if (age === AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Arbalester}`, ArcherRangeUpgrades.Arbalester.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Heavy_Cavalry_Archer}`, ArcherRangeUpgrades.Heavy_Cavalry_Archer.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Parthian_Tactics}`, ArcherRangeUpgrades.Parthian_Tactics.toLowerCase()));
+            
+            if (civ === 'vietnamese') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${ArcherRangeUpgrades.Imperial_Skirmisher}`, ArcherRangeUpgrades.Imperial_Skirmisher.toLowerCase()));                
+            }
+        }
+        return groupOfIcons;
+    }
+
+    private getStableUpgradesByAge(civName: string, age: string): JQuery<HTMLElement> {
+        const civ = civName.toLowerCase();
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-stable-upgrades"></div>`);
+        
+        if (age === AgeUpgrades.Feudal.toLowerCase()) {
+            groupOfIcons.css({
+                'padding-left': '1rem',
+                'margin-right': '-2rem'
+            });
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age).addClass('age-image-blend'));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Bloodlines}`, StableUpgrades.Bloodlines.toLowerCase()));
+        }
+        else if (age === AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age).addClass('age-image-blend'));
+            if (civ === 'teutons') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Light_Cavalry}`, StableUpgrades.Light_Cavalry.toLowerCase()));
+            }
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            // some dont have kts
+            // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            // some dont have camels
+            // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+
+            if (this.hasLancers(civ)) {
+                // some have lancers
+                // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            }
+            if (this.hasElephants(civ)) {
+                // some have elephatys
+                // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            }
+        }
+        else if (age === AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age).addClass('age-image-blend'));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Hussar}`, StableUpgrades.Hussar.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Cavalier}`, StableUpgrades.Cavalier.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Paladin}`, StableUpgrades.Paladin.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Heavy_Camel_Rider}`, StableUpgrades.Heavy_Camel_Rider.toLowerCase()));
+
+            if (civ === 'indians') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Imperial_Camel_Rider}`, StableUpgrades.Imperial_Camel_Rider.toLowerCase()));
+            }
+
+            if (this.hasLancers(civ)) {
+                // some have lancers
+                // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            }
+            if (this.hasElephants(civ)) {
+                // some have elephatys
+                // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${StableUpgrades.Husbandry}`, StableUpgrades.Husbandry.toLowerCase()));
+            }
+        }
+        return groupOfIcons;
+    }
+
+    private getBarracksUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
+        const groupOfIcons = $(`<div id="${civ.toLowerCase()}-${age}-barracks-upgrades"></div>`).addClass('age-upgrades');
+
+        if (age === AgeUpgrades.Feudal.toLowerCase() && (civ.toLowerCase() === 'goths')) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            if (civ.toLowerCase() === 'goths') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Supplies}`, BarrackUpgrades.Supplies.toLowerCase()));
+            }
+        }
+        else if (age === AgeUpgrades.Castle.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            if (civ === 'turks') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Pikeman}`, BarrackUpgrades.Pikeman.toLowerCase()));
+            }
+            if (civ === 'celts' || civ === 'khmer' || civ === 'magyars' || civ === 'portuguese') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Squires}`, BarrackUpgrades.Squires.toLowerCase()));
+            }
+            if (this.isMesoCiv(civ)) {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Eagle_Warrior}`, BarrackUpgrades.Eagle_Warrior.toLowerCase()));        
+            }
+        }
+        else if (age === AgeUpgrades.Imp.toLowerCase()) {
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${age}`, age));
+            if (civ.toLowerCase() === 'persians') {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Two_Handed_Swordsman}`, BarrackUpgrades.Two_Handed_Swordsman.toLowerCase()));
+            }
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Champion}`, BarrackUpgrades.Champion.toLowerCase()));
+            groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Halberdier}`, BarrackUpgrades.Halberdier.toLowerCase()));
+            if (this.isMesoCiv(civ)) {
+                groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Elite_Eagle_Warrior}`, BarrackUpgrades.Elite_Eagle_Warrior.toLowerCase()));        
+            }
+            if (civ.toLowerCase() === 'italians') {
+                // groupOfIcons.append(this.createUpgradeIcon(`${civ.toLowerCase()}-${BarrackUpgrades.Con}`, BarrackUpgrades.Con.toLowerCase()));        
+            }
+        }
+        return groupOfIcons;
     }
 
     private getBlacksmithUpgradesByAge(civ: string, age: string): JQuery<HTMLElement> {
@@ -280,24 +446,33 @@ export class UpgradeChanger {
         const disabledUpgrade = this.data[civName].disabled.techs.find((disabledUpgrade: string) => {
             return disabledUpgrade.toLowerCase() === upgrade;
         });
+        if (!!disabledUpgrade) { // explicit disabled techs
+            template.addClass('disabled-upgrade');
+        }
+
         const disabledUnit = this.data[civName].disabled.units.find((disabledUpgrade: string) => {
             return disabledUpgrade.toLowerCase() === upgrade;
         });
+        if (!!disabledUnit) {
+            template.addClass('disabled-upgrade');
+        }
         const horsesDisabled = this.data[civName].disableHorses;
 
-        if (!!disabledUpgrade) { // explicit disabled techs
-            template.addClass('disabled-upgrade');
-        } else if (horsesDisabled && upgrade.toLowerCase().includes('barding')) { // meso civs no horses
+        if (horsesDisabled && upgrade.toLowerCase().includes('barding')) { // meso civs no horses
             template.addClass('disabled-upgrade');
         } else if (upgrade.toLowerCase().includes('war galley')) {
             upgrade = 'war galley';
-        } else if (!!disabledUnit) {
-            template.addClass('disabled-upgrade');
         } else if (upgrade === 'feudal' || upgrade === 'castle' || upgrade === 'imperial') {
             upgrade = upgrade.concat('.tp');
             template.addClass('no-border');
         } else if (upgrade === 'heavy demolition ship') {
             upgrade = 'heavy demo ship';
+        } else if (upgrade === 'heavy camel rider') {
+            upgrade = 'heavy camel';
+        } else if (upgrade === 'imperial camel rider') {
+            upgrade = 'imperial camel';
+        } else if (upgrade === 'heavy cavalry archer') {
+            upgrade = 'heavy cav archer';
         }
         const css: any = {
             "background": `url("./images/upgrade-icons/${upgrade}.png")`,
@@ -308,5 +483,17 @@ export class UpgradeChanger {
 
         template.css(css);
         return template;
+    }
+
+    private hasElephants(civName: string): boolean {
+        return ['burmese', 'malay', 'vietnamese', 'khmer'].includes(civName.toLowerCase());
+    }
+
+    private hasLancers(civName: string): boolean {
+        return ['cumans','tatars'].includes(civName);
+    }
+
+    private isMesoCiv(civName: string): boolean {
+        return ['aztecs', 'incas', 'mayans'].includes(civName.toLowerCase());
     }
 }

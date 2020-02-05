@@ -6,5 +6,7 @@ export enum SocketEnums {
 }
 
 export enum OverlayEnums {
-    All = 'all', Tech = 'tech', Blacksmith = 'blacksmith', University = 'university', Monastary = 'monastary', Dock = 'dock', Sound = 'sound'
+    All = 'all', Tech = 'tech', Blacksmith = 'blacksmith', University = 'university', 
+    Monastary = 'monastary', Dock = 'dock', Sound = 'sound', Barracks = 'barracks',
+    'Archery-Range' = 'archery-range', Stable = 'stable', 'Siege-Workshop' = 'siege-workshop'
 }

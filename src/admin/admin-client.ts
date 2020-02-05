@@ -113,7 +113,7 @@ export class AdminClient {
         return isToggleActive;
     }
 
-    private getOverlayData(civ: string): any {
+    private getOverlayData(civ: string): any {       
         return {
             civ: civ,
             playSound: this.isToggleChecked(OverlayEnums.Sound),
@@ -124,6 +124,10 @@ export class AdminClient {
                 university: this.isToggleChecked(OverlayEnums.University),
                 monastary: this.isToggleChecked(OverlayEnums.Monastary),
                 dock: this.isToggleChecked(OverlayEnums.Dock),
+                barracks: this.isToggleChecked(OverlayEnums.Barracks),
+                "archery-range": this.isToggleChecked(OverlayEnums["Archery-Range"]),
+                stable: this.isToggleChecked(OverlayEnums.Stable),
+                "siege-workshop": this.isToggleChecked(OverlayEnums["Siege-Workshop"]),
             }
         };
     }
@@ -236,6 +240,34 @@ export class AdminClient {
             // hide the overlay
         });
         $('#toggle-dock-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-barracks-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-archery-range-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-stable-overlay').click(() => {
+            // if the civ is already selected
+            // if we toggle on
+            // show the overlay
+            // else
+            // hide the overlay
+        });
+        $('#toggle-siege-workshop-overlay').click(() => {
             // if the civ is already selected
             // if we toggle on
             // show the overlay

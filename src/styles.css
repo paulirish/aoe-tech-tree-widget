@@ -382,3 +382,9 @@ font-family: 'Spectral SC', serif;
     box-shadow: none;
     mix-blend-mode: multiply;
 }
+
+.age-image-blend {
+    border-radius: 0;
+    box-shadow: none;
+    mix-blend-mode: multiply;
+}

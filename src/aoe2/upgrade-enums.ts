@@ -129,12 +129,9 @@ export enum StableUpgrades {
 export enum BarrackUpgrades {
     //feudal
     Supplies = "Supplies",
-    Man_at_Arms = "Man-at-Arms",
 
     //castle
     Squires = "Squires",
-    Arson = "Arson",
-    Long_Swordsman = "Long Swordsman",
     Pikeman = "Pikeman",
     Eagle_Warrior = "Eagle Warrior",
 
@@ -145,7 +142,7 @@ export enum BarrackUpgrades {
     Elite_Eagle_Warrior = "Elite Eagle Warrior"
 }
 
-export enum ArcherUpgrades {
+export enum ArcherRangeUpgrades {
 
     //castle
     Crossbowman = "Crossbowman",
